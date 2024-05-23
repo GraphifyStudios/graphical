@@ -3,10 +3,13 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
+    "start": "bun src/index.ts",
+    "dev": "bun --hot src/index.ts",
     "credentials": "electron src/credential-fetcher.js"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.10.1",
+    "axios": "^1.7.2",
     "electron": "^30.0.7",
     "masterchat": "file:./lib/masterchat",
     "zod": "^3.23.8"
