@@ -2,6 +2,9 @@
   "name": "graphical",
   "module": "src/index.ts",
   "type": "module",
+  "dependencies": {
+    "masterchat": "file:./lib/masterchat"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -9,3 +12,4 @@
     "typescript": "^5.0.0"
   }
 }
+

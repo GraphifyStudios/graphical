@@ -1,0 +1,80 @@
+{
+  "name": "masterchat",
+  "description": "JavaScript library for YouTube Live Chat",
+  "version": "1.1.0",
+  "author": "Yasuaki Uechi <y@uechi.io> (https://uechi.io/)",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production rollup -c && shx rm -rf lib/lib lib/*.map && patch lib/masterchat.d.ts patches/fix-dts.patch",
+    "clean": "shx rm -rf lib",
+    "dev": "rollup -c -w",
+    "docs": "shx rm -rf docs && typedoc --out ./docs --excludeExternals --excludePrivate --excludeProtected --exclude '**/__tests__/*,**/*.test.ts' src && shx touch docs/.nojekyll",
+    "format": "pretty-quick --staged",
+    "prepare": "husky install",
+    "prepublishOnly": "npm run clean && npm run build",
+    "test": "npm run build && cross-env DEBUG=masterchat jest"
+  },
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./masterchat.d.ts",
+        "default": "./masterchat.mjs"
+      }
+    }
+  },
+  "types": "./lib/masterchat.d.ts",
+  "module": "./lib/masterchat.js",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "debug": "^4.3.2",
+    "iterator-helpers-polyfill": "^2.2.8",
+    "sha1": "^1.1.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-typescript": "^8.3.2",
+    "@types/debug": "^4.1.7",
+    "@types/events": "^3.0.0",
+    "@types/jest": "^27.5.1",
+    "@types/node": "^17.0.38",
+    "@types/sha1": "^1.1.3",
+    "cross-env": "^7.0.3",
+    "events": "^3.3.0",
+    "husky": "^8.0.1",
+    "jest": "^28.1.0",
+    "nock": "^13.2.4",
+    "nock-record": "^0.3.9",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.6.2",
+    "pretty-quick": "^3.1.1",
+    "rollup": "^2.75.4",
+    "rollup-plugin-dts": "^4.2.2",
+    "rollup-plugin-node-externals": "^4.0.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "shx": "^0.3.4",
+    "ts-jest": "^28.0.3",
+    "ts-node": "^10.8.0",
+    "tslib": "^2.4.0",
+    "typedoc": "^0.22.16",
+    "typescript": "^4.7.2"
+  },
+  "homepage": "https://github.com/holodata/masterchat",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/holodata/masterchat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/holodata/masterchat/issues"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "livechat",
+    "masterchat",
+    "youtube"
+  ],
+  "engines": {
+    "node": ">= 16.6"
+  }
+}
