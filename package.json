@@ -2,8 +2,12 @@
   "name": "graphical",
   "module": "src/index.ts",
   "type": "module",
+  "scripts": {
+    "credentials": "electron src/credential-fetcher.js"
+  },
   "dependencies": {
     "@t3-oss/env-core": "^0.10.1",
+    "electron": "^30.0.7",
     "masterchat": "file:./lib/masterchat",
     "zod": "^3.23.8"
   },

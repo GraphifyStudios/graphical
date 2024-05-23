@@ -4,6 +4,7 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     STREAM_ID: z.string(),
+    BOT_CREDENTIALS: z.string(),
   },
   clientPrefix: undefined,
   runtimeEnv: process.env,
