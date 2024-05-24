@@ -3,6 +3,7 @@ import { env } from "../utils/env";
 import { commandHandler, type Message } from "./command-handler";
 import { addGraphs } from "../utils/db";
 import { startLatestVideos } from "./latest-videos";
+import * as cheerio from "cheerio";
 
 const activeUsers = new Map<
   string,
@@ -13,7 +14,7 @@ const activeUsers = new Map<
   }
 >();
 
-async function createMasterchat(streamId: string) {
+async function startBot(streamId: string) {
   const mc = await Masterchat.init(streamId, {
     credentials: env.BOT_CREDENTIALS,
   });
@@ -82,19 +83,50 @@ async function createMasterchat(streamId: string) {
 
   console.log(`YouTube bot started for stream ID: ${streamId}!`);
 
-  await mc.listen({ ignoreFirstResponse: true });
+  mc.listen({ ignoreFirstResponse: true });
+  return [mc, streamId] as const;
+}
+
+async function getStreams(): Promise<string[]> {
+  const url = `https://www.youtube.com/channel/${env.STREAMER_CHANNEL_ID}/streams`;
+  const res = await fetch(url);
+  const html = await res.text();
+  const initialData = JSON.parse(
+    "{" + html.split("var ytInitialData = {")[1].split("};")[0] + "}"
+  );
+  const streams = initialData.contents.twoColumnBrowseResultsRenderer.tabs
+    .find((tab: any) => tab.tabRenderer.title === "Live")
+    ?.tabRenderer.content.richGridRenderer.contents.filter(
+      (stream: any) => !stream.richItemRenderer.content.videoRenderer.lengthText
+    )
+    .map(
+      (stream: any) => stream.richItemRenderer.content.videoRenderer.videoId
+    );
+  return streams;
 }
 
 export async function startYouTube() {
   console.log("Starting YouTube bot...");
 
-  const res = await fetch(
-    `https://youtube.googleapis.com/youtube/v3/search?part=snippet&channelId=${env.STREAMER_CHANNEL_ID}&eventType=live&maxResults=25&type=video&key=${env.YOUTUBE_API_KEY}`
-  );
-  const data = await res.json();
-  const streamIds = data.items.map((item: any) => item.id.videoId);
+  const streamsListening: Awaited<ReturnType<typeof startBot>>[] = [];
 
+  const streamIds = await getStreams();
   for (const streamId of streamIds) {
-    createMasterchat(streamId);
+    streamsListening.push(await startBot(streamId));
   }
+
+  setInterval(async () => {
+    const newStreamIds = await getStreams();
+    const streamsToRemove = streamsListening
+      .filter(([, streamId]) => !newStreamIds.includes(streamId))
+      .map(([mc]) => mc);
+    await Promise.all(streamsToRemove.map((mc) => mc.stop()));
+
+    const newStreams = newStreamIds.filter(
+      (streamId) => !streamsListening.some(([, id]) => id === streamId)
+    );
+    for (const streamId of newStreams) {
+      streamsListening.push(await startBot(streamId));
+    }
+  }, 5 * 60 * 1000);
 }
