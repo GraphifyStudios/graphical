@@ -43,6 +43,10 @@ async function startBot(streamId: string) {
 
   mc.on("chat", async (chat) => {
     const message: Message = {
+      channel: {
+        id: streamId,
+        platform: "youtube",
+      },
       content: stringify(chat.message!),
       author: {
         id: chat.authorChannelId,

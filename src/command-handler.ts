@@ -1,6 +1,10 @@
 import { readdir } from "node:fs/promises";
 
 export interface Message {
+  channel: {
+    id: string;
+    platform: "youtube";
+  };
   content: string;
   author: {
     id: string;
