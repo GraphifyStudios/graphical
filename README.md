@@ -1,15 +1,5 @@
-# graphical
+# Graphical
 
-To install dependencies:
+The official YouTube and Discord bot of Graphify.
 
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run src/index.ts
-```
-
-This project was created using `bun init` in bun v1.1.9. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+(NOTE: This is the new open-source version of Graphical. To view the old version, check out [this repository](https://github.com/GraphifyStudios/graphbot).)
