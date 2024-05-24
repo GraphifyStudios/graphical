@@ -20,7 +20,7 @@ export async function startYouTube() {
     credentials: env.BOT_CREDENTIALS,
   });
 
-  const graphDuration = 5 * 60 * 1000;
+  const graphDuration = 1 * 60 * 1000;
   setInterval(() => {
     if (activeUsers.size === 0) return;
 
