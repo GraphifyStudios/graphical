@@ -52,10 +52,14 @@ export function getUsers() {
   return [...db.users];
 }
 
-const createUser = (id: string): Database["users"][number] => ({
-  id,
-  graphs: 0,
-});
+const createUser = (
+  id: string,
+  data?: Partial<Database["users"][number]>
+): Database["users"][number] =>
+  Object.assign(data || {}, {
+    id,
+    graphs: 0,
+  } satisfies Database["users"][number]);
 
 export function getUser(id: string) {
   const user = db.users.find((c) => c.id === id);
@@ -76,22 +80,21 @@ export function isNewUser(id: string) {
 }
 
 export function addGraphs(id: string, graphs: number) {
-  const userIndex = db.users.findIndex((c) => c.id === id);
-  if (userIndex === -1)
-    return db.users.push({
-      id,
-      graphs,
-    });
-  db.users[userIndex].graphs += graphs;
+  const user = getUser(id);
+  if (!user) {
+    db.users.push(createUser(id, { graphs }));
+    return;
+  }
+  user.graphs += graphs;
+  setGraphs(id, user.graphs);
 }
 
 export function setGraphs(id: string, graphs: number) {
   const userIndex = db.users.findIndex((c) => c.id === id);
-  if (userIndex === -1)
-    return db.users.push({
-      id,
-      graphs,
-    });
+  if (userIndex === -1) {
+    db.users.push(createUser(id, { graphs }));
+    return;
+  }
   db.users[userIndex].graphs = graphs;
 }
 
@@ -114,11 +117,13 @@ export function getVote(id: string) {
 
 export function addVote(id: string) {
   const voteIndex = db.votes.findIndex((c) => c.id === id);
-  if (voteIndex === -1)
-    return db.votes.push({
+  if (voteIndex === -1) {
+    db.votes.push({
       id,
       votes: 1,
     });
+    return;
+  }
   db.votes[voteIndex].votes += 1;
 }
 
