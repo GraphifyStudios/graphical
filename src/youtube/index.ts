@@ -2,6 +2,7 @@ import { Masterchat, stringify } from "masterchat";
 import { env } from "../utils/env";
 import { commandHandler, type Message } from "./command-handler";
 import { addGraphs } from "../utils/db";
+import { startLatestVideos } from "../latest-videos";
 
 const activeUsers = new Map<
   string,
@@ -78,6 +79,8 @@ export async function startYouTube() {
       });
     }
   });
+
+  startLatestVideos((content) => mc.sendMessage(content));
 
   console.log("YouTube bot started!");
 

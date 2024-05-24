@@ -10,6 +10,11 @@ interface Database {
     id: string;
     votes: number;
   }[];
+  latestVideos: {
+    channelId: string;
+    latestVideoId: string;
+    latestShortId: string;
+  }[];
 }
 
 const dbPath = join(process.cwd(), "db.json");
@@ -21,6 +26,18 @@ async function initDatabase() {
       JSON.stringify({
         users: [],
         votes: [],
+        latestVideos: [
+          {
+            channelId: "UCX6OQ3DkcsbYNE6H8uQQuVA",
+            latestVideoId: "",
+            latestShortId: "",
+          },
+          {
+            channelId: "UCgG5aRcYGzPPB4UG3mS-ZNg",
+            latestVideoId: "famqxYOP_hQ",
+            latestShortId: "gaQ147zVniE",
+          },
+        ],
       } satisfies Database)
     );
   }
@@ -89,6 +106,27 @@ export function addVote(id: string) {
       votes: 1,
     });
   db.votes[voteIndex].votes += 1;
+}
+
+export function getLatestVideoChannels() {
+  return [...db.latestVideos];
+}
+
+export function getLatestVideos(channelId: string) {
+  const channel = db.latestVideos.find((c) => c.channelId === channelId);
+  if (!channel) return;
+  return channel;
+}
+
+export function setLatestVideo(
+  channelId: string,
+  videoId: string,
+  type: "video" | "short"
+) {
+  const channel = db.latestVideos.find((c) => c.channelId === channelId);
+  if (!channel) return;
+  const key = type === "video" ? "latestVideoId" : "latestShortId";
+  channel[key] = videoId;
 }
 
 setInterval(async () => {
