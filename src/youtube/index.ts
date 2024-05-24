@@ -27,7 +27,7 @@ export async function startYouTube() {
       if (Date.now() - data.lastMessageTime > graphDuration)
         activeUsers.delete(userId);
 
-      addGraphs(userId, data.isMember ? 2 : 1);
+      addGraphs(userId, data.messages * (data.isMember ? 2 : 1));
       activeUsers.set(userId, {
         ...data,
         messages: 0,
