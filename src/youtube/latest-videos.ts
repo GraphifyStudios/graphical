@@ -1,8 +1,7 @@
 import {
-  getLatestVideoChannels,
   getLatestVideos as getLatestVideosFromDb,
   setLatestVideo,
-} from "./utils/db";
+} from "../utils/db";
 
 export async function startLatestVideos(
   sendMessage: (content: string) => void

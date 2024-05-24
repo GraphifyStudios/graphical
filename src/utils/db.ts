@@ -108,10 +108,6 @@ export function addVote(id: string) {
   db.votes[voteIndex].votes += 1;
 }
 
-export function getLatestVideoChannels() {
-  return [...db.latestVideos];
-}
-
 export function getLatestVideos(channelId: string) {
   const channel = db.latestVideos.find((c) => c.channelId === channelId);
   if (!channel) return;
