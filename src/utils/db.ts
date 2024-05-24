@@ -6,6 +6,10 @@ interface Database {
     id: string;
     graphs: number;
   }[];
+  votes: {
+    id: string;
+    votes: number;
+  }[];
 }
 
 const dbPath = join(process.cwd(), "db.json");
@@ -16,7 +20,8 @@ async function initDatabase() {
       dbPath,
       JSON.stringify({
         users: [],
-      })
+        votes: [],
+      } satisfies Database)
     );
   }
 }
@@ -43,7 +48,7 @@ export function getUser(id: string) {
   return user;
 }
 
-export async function addGraphs(id: string, graphs: number) {
+export function addGraphs(id: string, graphs: number) {
   const userIndex = db.users.findIndex((c) => c.id === id);
   if (userIndex === -1)
     return db.users.push({
@@ -51,6 +56,29 @@ export async function addGraphs(id: string, graphs: number) {
       graphs,
     });
   db.users[userIndex].graphs += graphs;
+}
+
+export function getVote(id: string) {
+  const vote = db.votes.find((c) => c.id === id);
+  if (!vote) {
+    const data = {
+      id,
+      votes: 0,
+    } satisfies Database["votes"][number];
+    db.votes.push(data);
+    return data;
+  }
+  return vote;
+}
+
+export function addVote(id: string) {
+  const voteIndex = db.votes.findIndex((c) => c.id === id);
+  if (voteIndex === -1)
+    return db.votes.push({
+      id,
+      votes: 1,
+    });
+  db.votes[voteIndex].votes += 1;
 }
 
 setInterval(async () => {

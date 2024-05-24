@@ -24,16 +24,26 @@ class CommandHandler {
     this.commands = new Map(commands.map((command) => [command.name, command]));
   }
 
+  getCommand(name: string) {
+    return (
+      this.commands.get(name.toLowerCase()) ??
+      [...this.commands.values()].find((command) =>
+        command.aliases?.includes(name.toLowerCase())
+      )
+    );
+  }
+
   async handle(message: Message) {
     const [commandName, ...args] = message.content
       .slice("!".length)
       .trim()
       .split(" ");
-    const command = this.commands.get(commandName) ?? [...this.commands.values()].find((command) => command.aliases?.includes(commandName));
-    if (!command) return;
+    const command = this.getCommand(commandName);
+    if (!command) return false;
 
     try {
       await command.run({ message, args });
+      return true;
     } catch (err) {
       console.error(err);
     }

@@ -42,7 +42,7 @@ export async function startYouTube() {
       );
   }, graphDuration);
 
-  mc.on("chat", (chat) => {
+  mc.on("chat", async (chat) => {
     if (chat.authorChannelId === env.BOT_CHANNEL_ID) return;
 
     const message: Message = {
@@ -61,7 +61,18 @@ export async function startYouTube() {
       isMember: !!chat.membership,
     });
 
-    return commandHandler.handle(message);
+    const isBotCommand = await commandHandler.handle(message);
+    if (!isBotCommand) {
+      const voteCommand = commandHandler.getCommand("vote");
+      if (!voteCommand) return;
+
+      const [votee] = message.content.slice("!".length).trim().split(" ");
+
+      voteCommand.run({
+        message,
+        args: [votee],
+      });
+    }
   });
 
   console.log("YouTube bot started!");
