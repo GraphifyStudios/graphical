@@ -1,4 +1,4 @@
-import { exists } from "node:fs/promises";
+import { exists, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
 interface Database {
@@ -139,6 +139,14 @@ export function setLatestVideo(
   channel[key] = videoId;
 }
 
+const backupsPath = join(process.cwd(), "backups");
+
 setInterval(async () => {
   await Bun.write(dbPath, JSON.stringify(db));
+
+  if (!(await exists(backupsPath))) await mkdir(backupsPath);
+  await Bun.write(
+    join(backupsPath, `db-${Date.now()}.json`),
+    JSON.stringify(db)
+  );
 }, 10_000);

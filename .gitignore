@@ -176,3 +176,4 @@ dist
 
 # Database
 db.json
+backups/
