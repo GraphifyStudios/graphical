@@ -22,5 +22,7 @@ export async function startYouTube() {
     return commandHandler.handle(message);
   });
 
+  console.log("YouTube bot started!");
+
   await mc.listen({ ignoreFirstResponse: true });
 }
