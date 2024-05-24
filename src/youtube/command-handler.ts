@@ -51,4 +51,5 @@ async function loadCommands() {
   return commands;
 }
 
-export const commandHandler = new CommandHandler(await loadCommands());
+export const commands = await loadCommands();
+export const commandHandler = new CommandHandler(commands);
