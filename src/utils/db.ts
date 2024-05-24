@@ -58,6 +58,16 @@ export function addGraphs(id: string, graphs: number) {
   db.users[userIndex].graphs += graphs;
 }
 
+export function setGraphs(id: string, graphs: number) {
+  const userIndex = db.users.findIndex((c) => c.id === id);
+  if (userIndex === -1)
+    return db.users.push({
+      id,
+      graphs,
+    });
+  db.users[userIndex].graphs = graphs;
+}
+
 export function getVote(id: string) {
   const vote = db.votes.find((c) => c.id === id);
   if (!vote) {

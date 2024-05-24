@@ -14,11 +14,13 @@ export interface Command {
   name: string;
   aliases?: string[];
   description?: string;
+  cooldown?: number;
   run: ({ message, args }: { message: Message; args: string[] }) => any;
 }
 
 class CommandHandler {
   private commands: Map<string, Command>;
+  private cooldowns = new Map<string, number>();
 
   constructor(commands: Command[]) {
     this.commands = new Map(commands.map((command) => [command.name, command]));
@@ -40,6 +42,24 @@ class CommandHandler {
       .split(" ");
     const command = this.getCommand(commandName);
     if (!command) return false;
+
+    if (command.cooldown) {
+      const cooldown = this.cooldowns.get(
+        `${commandName}-${message.author.id}`
+      );
+      if (cooldown) {
+        if (Date.now() - cooldown < command.cooldown)
+          return message.reply(
+            `${
+              message.author.name
+            }, you're on cooldown! Please wait ${Math.round(
+              (command.cooldown - (Date.now() - cooldown)) / 1000
+            )} seconds before using this command again.`
+          );
+      }
+
+      this.cooldowns.set(`${commandName}-${message.author.id}`, Date.now());
+    }
 
     try {
       await command.run({ message, args });
