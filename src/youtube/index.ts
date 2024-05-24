@@ -62,7 +62,7 @@ async function startBot(streamId: string) {
 
     activeUsers.set(message.author.id, {
       lastMessageTime: Date.now(),
-      messages: activeUsers.get(message.author.id)?.messages ?? 0 + 1,
+      messages: (activeUsers.get(message.author.id)?.messages ?? 0) + 1,
       isMember: !!chat.membership,
     });
 
