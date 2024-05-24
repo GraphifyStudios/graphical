@@ -1,11 +1,14 @@
 import type { Command } from "@/command-handler";
-import { getUser } from "@/utils/db";
+import { ensureUser } from "@/utils/db";
 
 export default {
   name: "hours",
   description: "View the number of hours you have",
   run: ({ message }) => {
-    const user = getUser(message.author.id);
+    const user = ensureUser(message.author.id, {
+      id: message.author.id,
+      name: message.author.name,
+    });
     const hours = Math.floor(user.graphs / 12);
 
     message.reply(

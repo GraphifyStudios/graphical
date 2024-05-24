@@ -1,4 +1,4 @@
-import { getUser } from "@/utils/db";
+import { ensureUser } from "@/utils/db";
 import type { Command } from "@/command-handler";
 
 export default {
@@ -6,7 +6,10 @@ export default {
   aliases: ["points", "xp"],
   description: "View the number of graphs you have",
   run: ({ message }) => {
-    const user = getUser(message.author.id);
+    const user = ensureUser(message.author.id, {
+      id: message.author.id,
+      name: message.author.name,
+    });
     message.reply(
       `${message.author.name}, you currently have ${user.graphs} graph${
         user.graphs !== 1 ? "s" : ""

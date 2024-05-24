@@ -10,5 +10,6 @@ users.get("/", async (c) => {
 
 users.get("/:id", async (c) => {
   const user = getUser(c.req.param("id"));
+  if (!user) return c.json({ error: "User not found" }, 404);
   return c.json(user);
 });

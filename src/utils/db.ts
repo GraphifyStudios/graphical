@@ -4,6 +4,7 @@ import { join } from "node:path";
 interface Database {
   users: {
     id: string;
+    name: string;
     graphs: number;
     messages: number;
   }[];
@@ -49,49 +50,52 @@ await initDatabase();
 const dbFile = Bun.file(dbPath);
 const db: Database = await dbFile.json();
 
+export function createUser(
+  data: Partial<Database["users"][number]> &
+    Pick<Database["users"][number], "id" | "name">
+) {
+  const userData = Object.assign(data || {}, {
+    graphs: 0,
+    messages: 0,
+  }) as Database["users"][number];
+  db.users.push(userData);
+  return userData;
+}
+
 export function getUsers() {
   return [...db.users];
 }
 
-const createUser = (
-  id: string,
-  data?: Partial<Database["users"][number]>
-): Database["users"][number] =>
-  Object.assign(data || {}, {
-    id,
-    graphs: 0,
-    messages: 0,
-  } satisfies Database["users"][number]);
-
 export function getUser(id: string) {
   const user = db.users.find((c) => c.id === id);
-  if (!user) {
-    const data = createUser(id);
-    db.users.push(data);
-    return data;
-  }
+  if (!user) return null;
   return user;
+}
+
+export function ensureUser(
+  id: string,
+  data: Partial<Database["users"][number]> &
+    Pick<Database["users"][number], "id" | "name">
+) {
+  const user = getUser(id);
+  if (user) return user;
+  return createUser(data);
 }
 
 export function isNewUser(id: string) {
   const user = db.users.find((c) => c.id === id);
-  if (!user) {
-    db.users.push(createUser(id));
-    return true;
-  } else return false;
+  return !user;
 }
 
 export function setUser(id: string, data: Partial<Database["users"][number]>) {
   const userIndex = db.users.findIndex((c) => c.id === id);
-  if (userIndex === -1) {
-    db.users.push(createUser(id, data));
-    return;
-  }
+  if (userIndex === -1) throw new Error("User not found");
   db.users[userIndex] = Object.assign(db.users[userIndex], data);
 }
 
 export function addGraphs(id: string, graphs: number) {
   const user = getUser(id);
+  if (!user) throw new Error("User not found");
   user.graphs += graphs;
   setUser(id, user);
 }
@@ -102,14 +106,7 @@ export function getVotes() {
 
 export function getVote(id: string) {
   const vote = db.votes.find((c) => c.id === id);
-  if (!vote) {
-    const data = {
-      id,
-      votes: 0,
-    } satisfies Database["votes"][number];
-    db.votes.push(data);
-    return data;
-  }
+  if (!vote) return null;
   return vote;
 }
 

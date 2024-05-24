@@ -1,4 +1,4 @@
-import { getUser, setUser } from "@/utils/db";
+import { ensureUser, setUser } from "@/utils/db";
 import type { Command } from "@/command-handler";
 
 export default {
@@ -19,7 +19,10 @@ export default {
         `${message.author.name}, you need to bet more than 50 graphs.`
       );
 
-    const user = getUser(message.author.id);
+    const user = ensureUser(message.author.id, {
+      id: message.author.id,
+      name: message.author.name,
+    });
     if (amount > user.graphs)
       return message.reply(
         `${

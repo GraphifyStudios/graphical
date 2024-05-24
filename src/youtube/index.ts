@@ -1,7 +1,7 @@
 import { Masterchat, stringify, type AddChatItemAction } from "masterchat";
 import { env } from "@/utils/env";
 import { commandHandler, type Message } from "@/command-handler";
-import { addGraphs, getUser, isNewUser, setUser } from "@/utils/db";
+import { addGraphs, ensureUser, isNewUser, setUser } from "@/utils/db";
 import { startLatestVideos } from "./latest-videos";
 
 const activeUsers = new Map<
@@ -72,7 +72,10 @@ async function startBot(streamId: string) {
       isMember: !!chat.membership,
     });
 
-    const user = getUser(message.author.id);
+    const user = ensureUser(message.author.id, {
+      id: message.author.id,
+      name: message.author.name,
+    });
     user.messages++;
     setUser(message.author.id, user);
 

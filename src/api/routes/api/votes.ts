@@ -10,5 +10,6 @@ votes.get("/", (c) => {
 
 votes.get("/:id", (c) => {
   const vote = getVote(c.req.param("id"));
+  if (!vote) return c.json({ error: "Vote not found" }, 404);
   return c.json(vote);
 });
