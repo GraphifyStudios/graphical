@@ -10,6 +10,8 @@ export async function startYouTube() {
   });
 
   mc.on("chat", (chat) => {
+    if(chat.authorChannelId === env.BOT_CHANNEL_ID) return;
+
     const message: Message = {
       content: stringify(chat.message!),
       author: {
