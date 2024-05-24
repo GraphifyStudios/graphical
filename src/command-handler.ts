@@ -72,7 +72,7 @@ class CommandHandler {
 
 async function loadCommands() {
   const commands: Command[] = [];
-  const commandFiles = await readdir("./src/youtube/commands");
+  const commandFiles = await readdir("./src/commands");
   for (const file of commandFiles) {
     const command = await import(`./commands/${file}`);
     commands.push(command.default);

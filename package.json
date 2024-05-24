@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.10.1",
-    "cheerio": "^1.0.0-rc.12",
     "electron": "^30.0.7",
     "hono": "^4.3.10",
     "masterchat": "file:./lib/masterchat",

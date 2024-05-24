@@ -1,9 +1,8 @@
 import { Masterchat, stringify } from "masterchat";
 import { env } from "../utils/env";
-import { commandHandler, type Message } from "./command-handler";
+import { commandHandler, type Message } from "../command-handler";
 import { addGraphs } from "../utils/db";
 import { startLatestVideos } from "./latest-videos";
-import * as cheerio from "cheerio";
 
 const activeUsers = new Map<
   string,
