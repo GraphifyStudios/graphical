@@ -29,7 +29,7 @@ class CommandHandler {
       .slice("!".length)
       .trim()
       .split(" ");
-    const command = this.commands.get(commandName);
+    const command = this.commands.get(commandName) ?? [...this.commands.values()].find((command) => command.aliases?.includes(commandName));
     if (!command) return;
 
     try {

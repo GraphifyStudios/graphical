@@ -3,6 +3,7 @@ import type { Command } from "../command-handler";
 
 export default {
   name: "graphs",
+  aliases: ["points", "xp"],
   description: "View the number of graphs you have",
   run: ({ message }) => {
     const user = getUser(message.author.id);
