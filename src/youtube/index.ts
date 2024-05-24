@@ -15,7 +15,7 @@ const activeUsers = new Map<
 
 async function startBot(streamId: string) {
   const mc = await Masterchat.init(streamId, {
-    credentials: env.BOT_CREDENTIALS,
+    credentials: env.YOUTUBE_BOT_CREDENTIALS,
   });
 
   const graphDuration = 1 * 60 * 1000;
@@ -53,7 +53,7 @@ async function startBot(streamId: string) {
     };
 
     if (
-      message.author.id === env.BOT_CHANNEL_ID ||
+      message.author.id === env.YOUTUBE_BOT_CHANNEL_ID ||
       !message.content.startsWith("!")
     )
       return;
@@ -87,7 +87,7 @@ async function startBot(streamId: string) {
 }
 
 async function getStreams(): Promise<string[]> {
-  const url = `https://www.youtube.com/channel/${env.STREAMER_CHANNEL_ID}/streams`;
+  const url = `https://www.youtube.com/channel/${env.YOUTUBE_STREAMER_CHANNEL_ID}/streams`;
   const res = await fetch(url);
   const html = await res.text();
   const initialData = JSON.parse(
