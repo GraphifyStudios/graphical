@@ -1,7 +1,7 @@
 import { Masterchat, stringify } from "masterchat";
 import { env } from "@/utils/env";
 import { commandHandler, type Message } from "@/command-handler";
-import { addGraphs, isNewUser } from "@/utils/db";
+import { addGraphs, getUser, isNewUser, setUser } from "@/utils/db";
 import { startLatestVideos } from "./latest-videos";
 
 const activeUsers = new Map<
@@ -43,6 +43,10 @@ async function startBot(streamId: string) {
 
     if (isNewUser(message.author.id))
       mc.sendMessage(`Welcome to the stream ${message.author.name}!`);
+
+    const user = getUser(message.author.id);
+    user.messages++;
+    setUser(message.author.id, user);
 
     if (message.content.startsWith("!")) {
       const isBotCommand = await commandHandler.handle(message);
