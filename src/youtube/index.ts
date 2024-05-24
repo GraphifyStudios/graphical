@@ -9,20 +9,18 @@ export async function startYouTube() {
     credentials: env.BOT_CREDENTIALS,
   });
 
-  setTimeout(() => {
-    mc.on("chat", (chat) => {
-      const message: Message = {
-        content: stringify(chat.message!),
-        author: {
-          id: chat.authorChannelId,
-          name: chat.authorName!,
-          avatar: chat.authorPhoto,
-        },
-        reply: (content: string) => mc.sendMessage(content),
-      };
-      return commandHandler.handle(message);
-    });
-  }, 1500);
+  mc.on("chat", (chat) => {
+    const message: Message = {
+      content: stringify(chat.message!),
+      author: {
+        id: chat.authorChannelId,
+        name: chat.authorName!,
+        avatar: chat.authorPhoto,
+      },
+      reply: (content: string) => mc.sendMessage(content),
+    };
+    return commandHandler.handle(message);
+  });
 
-  await mc.listen();
+  await mc.listen({ ignoreFirstResponse: true });
 }
