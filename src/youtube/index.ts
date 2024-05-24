@@ -43,8 +43,6 @@ export async function startYouTube() {
   }, graphDuration);
 
   mc.on("chat", async (chat) => {
-    if (chat.authorChannelId === env.BOT_CHANNEL_ID) return;
-
     const message: Message = {
       content: stringify(chat.message!),
       author: {
@@ -54,6 +52,12 @@ export async function startYouTube() {
       },
       reply: (content: string) => mc.sendMessage(content),
     };
+
+    if (
+      message.author.id === env.BOT_CHANNEL_ID ||
+      !message.content.startsWith("!")
+    )
+      return;
 
     activeUsers.set(message.author.id, {
       lastMessageTime: Date.now(),
