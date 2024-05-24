@@ -13,6 +13,20 @@ const activeUsers = new Map<
   }
 >();
 
+function sendMessage(mc: Masterchat, content: string) {
+  if (content.length === 0) return;
+  if (content.length > 200) {
+    const messages = [];
+    while (content.length > 200) {
+      messages.push(content.substring(0, 200));
+      content = content.substring(200);
+    }
+    for (const message of messages) {
+      mc.sendMessage(message);
+    }
+  } else mc.sendMessage(content);
+}
+
 class YTMessage implements Message {
   constructor(private chat: AddChatItemAction, private mc: Masterchat) {}
 
@@ -36,17 +50,7 @@ class YTMessage implements Message {
   }
 
   reply(content: string) {
-    if (content.length === 0) return;
-    if (content.length > 200) {
-      const messages = [];
-      while (content.length > 200) {
-        messages.push(content.substring(0, 200));
-        content = content.substring(200);
-      }
-      for (const message of messages) {
-        this.mc.sendMessage(message);
-      }
-    } else this.mc.sendMessage(content);
+    sendMessage(this.mc, content);
   }
 }
 
@@ -57,17 +61,16 @@ async function startBot(streamId: string) {
 
   mc.on("chat", async (chat) => {
     const message = new YTMessage(chat, mc);
-
     if (message.author.id === env.YOUTUBE_BOT_CHANNEL_ID) return;
+
+    if (isNewUser(message.author.id))
+      message.reply(`Welcome to the stream ${message.author.name}!`);
 
     activeUsers.set(message.author.id, {
       lastMessageTime: Date.now(),
       messages: (activeUsers.get(message.author.id)?.messages ?? 0) + 1,
       isMember: !!chat.membership,
     });
-
-    if (isNewUser(message.author.id))
-      mc.sendMessage(`Welcome to the stream ${message.author.name}!`);
 
     const user = getUser(message.author.id);
     user.messages++;
@@ -78,7 +81,7 @@ async function startBot(streamId: string) {
       if (!isBotCommand) {
         const helloCommands = ["hello", "hi", "hey", "sup", "yo"];
         if (helloCommands.includes(message.content.toLowerCase()))
-          return mc.sendMessage(`Hello ${message.author.name}!`);
+          return message.reply(`Hello ${message.author.name}!`);
 
         const goodbyeCommands = [
           "bye",
@@ -90,7 +93,7 @@ async function startBot(streamId: string) {
           "gtg",
         ];
         if (goodbyeCommands.includes(message.content.toLowerCase()))
-          return mc.sendMessage(`Goodbye ${message.author.name}!`);
+          return message.reply(`Goodbye ${message.author.name}!`);
 
         const voteCommand = commandHandler.getCommand("vote");
         if (!voteCommand) return;
@@ -104,7 +107,7 @@ async function startBot(streamId: string) {
     }
   });
 
-  startLatestVideos((content) => mc.sendMessage(content));
+  startLatestVideos((content) => sendMessage(mc, content));
 
   console.log(`YouTube bot started for stream ID: ${streamId}!`);
 
@@ -157,7 +160,8 @@ export async function startYouTube() {
 
     if (activeUsers.size > 0) {
       for (const [mc] of streamsListening) {
-        mc.sendMessage(
+        sendMessage(
+          mc,
           `${activeUsers.size} user${activeUsers.size !== 1 ? "s" : ""} ${
             activeUsers.size !== 1 ? "have" : "has"
           } been given graphs!`
