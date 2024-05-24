@@ -2,6 +2,11 @@ import { readdir } from "node:fs/promises";
 
 export interface Message {
   content: string;
+  author: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
   reply: (content: string) => void;
 }
 
