@@ -142,11 +142,11 @@ export function setLatestVideo(
 const backupsPath = join(process.cwd(), "backups");
 
 setInterval(async () => {
-  await Bun.write(dbPath, JSON.stringify(db));
-
   if (!(await exists(backupsPath))) await mkdir(backupsPath);
   await Bun.write(
     join(backupsPath, `db-${Date.now()}.json`),
     JSON.stringify(db)
   );
+
+  await Bun.write(dbPath, JSON.stringify(db));
 }, 10_000);
