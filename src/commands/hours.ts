@@ -9,7 +9,9 @@ export default {
     const hours = Math.floor(user.graphs / 12);
 
     message.reply(
-      `${message.author.name}, you have ${hours.toLocaleString()} hour${
+      `${
+        message.author.name
+      }, you currently have ${hours.toLocaleString()} hour${
         hours !== 1 ? "s" : ""
       }`
     );

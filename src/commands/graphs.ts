@@ -8,7 +8,9 @@ export default {
   run: ({ message }) => {
     const user = getUser(message.author.id);
     message.reply(
-      `${message.author.name}, you currently have ${user.graphs} graphs.`
+      `${message.author.name}, you currently have ${user.graphs} graph${
+        user.graphs !== 1 ? "s" : ""
+      }.`
     );
   },
 } satisfies Command;
