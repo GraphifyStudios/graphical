@@ -1,5 +1,7 @@
 import "./utils/env";
 
 import { startYouTube } from "./youtube";
+import { startApi } from "./api";
 
-await startYouTube();
+startYouTube();
+startApi();

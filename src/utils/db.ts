@@ -26,6 +26,10 @@ await initDatabase();
 const dbFile = Bun.file(dbPath);
 const db: Database = await dbFile.json();
 
+export function getUsers() {
+  return [...db.users];
+}
+
 export function getUser(id: string) {
   const user = db.users.find((c) => c.id === id);
   if (!user) {

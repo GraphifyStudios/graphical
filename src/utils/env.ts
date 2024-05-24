@@ -6,6 +6,7 @@ export const env = createEnv({
     STREAM_ID: z.string(),
     BOT_CHANNEL_ID: z.string(),
     BOT_CREDENTIALS: z.string(),
+    PORT: z.coerce.number().default(3000),
   },
   clientPrefix: undefined,
   runtimeEnv: process.env,
