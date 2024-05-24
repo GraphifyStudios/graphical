@@ -13,10 +13,8 @@ const activeUsers = new Map<
   }
 >();
 
-export async function startYouTube() {
-  console.log("Starting YouTube bot...");
-
-  const mc = await Masterchat.init(env.STREAM_ID, {
+async function createMasterchat(streamId: string) {
+  const mc = await Masterchat.init(streamId, {
     credentials: env.BOT_CREDENTIALS,
   });
 
@@ -82,7 +80,21 @@ export async function startYouTube() {
 
   startLatestVideos((content) => mc.sendMessage(content));
 
-  console.log("YouTube bot started!");
+  console.log(`YouTube bot started for stream ID: ${streamId}!`);
 
   await mc.listen({ ignoreFirstResponse: true });
+}
+
+export async function startYouTube() {
+  console.log("Starting YouTube bot...");
+
+  const res = await fetch(
+    `https://youtube.googleapis.com/youtube/v3/search?part=snippet&channelId=${env.STREAMER_CHANNEL_ID}&eventType=live&maxResults=25&type=video&key=${env.YOUTUBE_API_KEY}`
+  );
+  const data = await res.json();
+  const streamIds = data.items.map((item: any) => item.id.videoId);
+
+  for (const streamId of streamIds) {
+    createMasterchat(streamId);
+  }
 }
