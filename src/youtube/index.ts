@@ -18,29 +18,6 @@ async function startBot(streamId: string) {
     credentials: env.YOUTUBE_BOT_CREDENTIALS,
   });
 
-  const graphDuration = 1 * 60 * 1000;
-  setInterval(() => {
-    if (activeUsers.size === 0) return;
-
-    for (const [userId, data] of activeUsers) {
-      if (Date.now() - data.lastMessageTime > graphDuration)
-        activeUsers.delete(userId);
-
-      addGraphs(userId, data.messages * (data.isMember ? 2 : 1));
-      activeUsers.set(userId, {
-        ...data,
-        messages: 0,
-      });
-    }
-
-    if (activeUsers.size > 0)
-      mc.sendMessage(
-        `${activeUsers.size} user${activeUsers.size !== 1 ? "s" : ""} ${
-          activeUsers.size !== 1 ? "have" : "has"
-        } been given graphs!`
-      );
-  }, graphDuration);
-
   mc.on("chat", async (chat) => {
     const message: Message = {
       channel: {
@@ -117,6 +94,32 @@ export async function startYouTube() {
   for (const streamId of streamIds) {
     streamsListening.push(await startBot(streamId));
   }
+
+  const graphDuration = 1 * 60 * 1000;
+  setInterval(() => {
+    if (activeUsers.size === 0) return;
+
+    for (const [userId, data] of activeUsers) {
+      if (Date.now() - data.lastMessageTime > graphDuration)
+        activeUsers.delete(userId);
+
+      addGraphs(userId, data.messages * (data.isMember ? 2 : 1));
+      activeUsers.set(userId, {
+        ...data,
+        messages: 0,
+      });
+    }
+
+    if (activeUsers.size > 0) {
+      for (const [mc] of streamsListening) {
+        mc.sendMessage(
+          `${activeUsers.size} user${activeUsers.size !== 1 ? "s" : ""} ${
+            activeUsers.size !== 1 ? "have" : "has"
+          } been given graphs!`
+        );
+      }
+    }
+  }, graphDuration);
 
   setInterval(async () => {
     const newStreamIds = await getStreams();
