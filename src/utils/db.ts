@@ -85,6 +85,10 @@ export function setGraphs(id: string, graphs: number) {
   db.users[userIndex].graphs = graphs;
 }
 
+export function getVotes() {
+  return [...db.votes];
+}
+
 export function getVote(id: string) {
   const vote = db.votes.find((c) => c.id === id);
   if (!vote) {
