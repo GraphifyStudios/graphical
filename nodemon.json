@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json.schemastore.org/nodemon",
+  "exec": "bun src/index.ts",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "ts"
+}
