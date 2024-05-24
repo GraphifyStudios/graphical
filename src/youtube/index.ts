@@ -47,12 +47,27 @@ async function startBot(streamId: string) {
 
     const isBotCommand = await commandHandler.handle(message);
     if (!isBotCommand) {
+      const helloCommands = ["hello", "hi", "hey", "sup", "yo"];
+      if (helloCommands.includes(message.content.toLowerCase()))
+        return mc.sendMessage(`Hello ${message.author.name}!`);
+
+      const goodbyeCommands = [
+        "bye",
+        "bye bye",
+        "goodbye",
+        "see you later",
+        "see you",
+        "cya",
+        "gtg",
+      ];
+      if (goodbyeCommands.includes(message.content.toLowerCase()))
+        return mc.sendMessage(`Goodbye ${message.author.name}!`);
+
       const voteCommand = commandHandler.getCommand("vote");
       if (!voteCommand) return;
 
       const [votee] = message.content.slice("!".length).trim().split(" ");
-
-      voteCommand.run({
+      return voteCommand.run({
         message,
         args: [votee],
       });
