@@ -1,4 +1,4 @@
-import { getUser, setGraphs } from "@/utils/db";
+import { getUser, setUser } from "@/utils/db";
 import type { Command } from "@/command-handler";
 
 export default {
@@ -36,7 +36,7 @@ export default {
           );
 
           user.graphs += amountWon;
-          setGraphs(message.author.id, user.graphs);
+          setUser(message.author.id, user);
 
           message.reply(
             `${
@@ -48,7 +48,8 @@ export default {
       case false:
         {
           user.graphs -= amount;
-          setGraphs(message.author.id, user.graphs);
+          setUser(message.author.id, user);
+
           message.reply(
             `${
               message.author.name

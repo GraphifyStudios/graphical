@@ -5,6 +5,7 @@ interface Database {
   users: {
     id: string;
     graphs: number;
+    messages: number;
   }[];
   votes: {
     id: string;
@@ -59,6 +60,7 @@ const createUser = (
   Object.assign(data || {}, {
     id,
     graphs: 0,
+    messages: 0,
   } satisfies Database["users"][number]);
 
 export function getUser(id: string) {
@@ -79,23 +81,19 @@ export function isNewUser(id: string) {
   } else return false;
 }
 
-export function addGraphs(id: string, graphs: number) {
-  const user = getUser(id);
-  if (!user) {
-    db.users.push(createUser(id, { graphs }));
-    return;
-  }
-  user.graphs += graphs;
-  setGraphs(id, user.graphs);
-}
-
-export function setGraphs(id: string, graphs: number) {
+export function setUser(id: string, data: Partial<Database["users"][number]>) {
   const userIndex = db.users.findIndex((c) => c.id === id);
   if (userIndex === -1) {
-    db.users.push(createUser(id, { graphs }));
+    db.users.push(createUser(id, data));
     return;
   }
-  db.users[userIndex].graphs = graphs;
+  db.users[userIndex] = Object.assign(db.users[userIndex], data);
+}
+
+export function addGraphs(id: string, graphs: number) {
+  const user = getUser(id);
+  user.graphs += graphs;
+  setUser(id, user);
 }
 
 export function getVotes() {
