@@ -1,5 +1,5 @@
-import { getUser } from "../../utils/db";
-import type { Command } from "../command-handler";
+import { getUser } from "@/utils/db";
+import type { Command } from "@/command-handler";
 
 export default {
   name: "hello",

@@ -1,5 +1,5 @@
-import { getUser, setGraphs } from "../../utils/db";
-import type { Command } from "../command-handler";
+import { getUser, setGraphs } from "@/utils/db";
+import type { Command } from "@/command-handler";
 
 export default {
   name: "gamble",

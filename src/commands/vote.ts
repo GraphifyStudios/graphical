@@ -1,5 +1,5 @@
-import { addVote, getVote } from "../../utils/db";
-import type { Command } from "../command-handler";
+import { addVote, getVote } from "@/utils/db";
+import type { Command } from "@/command-handler";
 
 const names = {
   tseries: "T-Series",

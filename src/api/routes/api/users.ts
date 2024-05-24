@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { getUser, getUsers } from "../../../utils/db";
+import { getUser, getUsers } from "@/utils/db";
 
 export const users = new Hono();
 

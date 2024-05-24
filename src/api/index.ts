@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { env } from "../utils/env";
+import { env } from "@/utils/env";
 import { api } from "./routes/api";
 
 export async function startApi() {
