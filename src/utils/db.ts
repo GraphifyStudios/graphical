@@ -4,6 +4,7 @@ import { join } from "node:path";
 interface Database {
   users: {
     id: string;
+    graphs: number;
   }[];
 }
 
@@ -28,7 +29,10 @@ const db: Database = await dbFile.json();
 export function getUser(id: string) {
   const user = db.users.find((c) => c.id === id);
   if (!user) {
-    const data = { id };
+    const data = {
+      id,
+      graphs: 0,
+    } satisfies Database["users"][number];
     db.users.push(data);
     return data;
   }
