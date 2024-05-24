@@ -52,17 +52,27 @@ export function getUsers() {
   return [...db.users];
 }
 
+const createUser = (id: string): Database["users"][number] => ({
+  id,
+  graphs: 0,
+});
+
 export function getUser(id: string) {
   const user = db.users.find((c) => c.id === id);
   if (!user) {
-    const data = {
-      id,
-      graphs: 0,
-    } satisfies Database["users"][number];
+    const data = createUser(id);
     db.users.push(data);
     return data;
   }
   return user;
+}
+
+export function isNewUser(id: string) {
+  const user = db.users.find((c) => c.id === id);
+  if (!user) {
+    db.users.push(createUser(id));
+    return true;
+  } else return false;
 }
 
 export function addGraphs(id: string, graphs: number) {

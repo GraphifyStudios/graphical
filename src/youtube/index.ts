@@ -1,7 +1,7 @@
 import { Masterchat, stringify } from "masterchat";
 import { env } from "@/utils/env";
 import { commandHandler, type Message } from "@/command-handler";
-import { addGraphs } from "@/utils/db";
+import { addGraphs, isNewUser } from "@/utils/db";
 import { startLatestVideos } from "./latest-videos";
 
 const activeUsers = new Map<
@@ -33,11 +33,7 @@ async function startBot(streamId: string) {
       reply: (content: string) => mc.sendMessage(content),
     };
 
-    if (
-      message.author.id === env.YOUTUBE_BOT_CHANNEL_ID ||
-      !message.content.startsWith("!")
-    )
-      return;
+    if (message.author.id === env.YOUTUBE_BOT_CHANNEL_ID) return;
 
     activeUsers.set(message.author.id, {
       lastMessageTime: Date.now(),
@@ -45,32 +41,37 @@ async function startBot(streamId: string) {
       isMember: !!chat.membership,
     });
 
-    const isBotCommand = await commandHandler.handle(message);
-    if (!isBotCommand) {
-      const helloCommands = ["hello", "hi", "hey", "sup", "yo"];
-      if (helloCommands.includes(message.content.toLowerCase()))
-        return mc.sendMessage(`Hello ${message.author.name}!`);
+    if (isNewUser(message.author.id))
+      mc.sendMessage(`Welcome to the stream ${message.author.name}!`);
 
-      const goodbyeCommands = [
-        "bye",
-        "bye bye",
-        "goodbye",
-        "see you later",
-        "see you",
-        "cya",
-        "gtg",
-      ];
-      if (goodbyeCommands.includes(message.content.toLowerCase()))
-        return mc.sendMessage(`Goodbye ${message.author.name}!`);
+    if (message.content.startsWith("!")) {
+      const isBotCommand = await commandHandler.handle(message);
+      if (!isBotCommand) {
+        const helloCommands = ["hello", "hi", "hey", "sup", "yo"];
+        if (helloCommands.includes(message.content.toLowerCase()))
+          return mc.sendMessage(`Hello ${message.author.name}!`);
 
-      const voteCommand = commandHandler.getCommand("vote");
-      if (!voteCommand) return;
+        const goodbyeCommands = [
+          "bye",
+          "bye bye",
+          "goodbye",
+          "see you later",
+          "see you",
+          "cya",
+          "gtg",
+        ];
+        if (goodbyeCommands.includes(message.content.toLowerCase()))
+          return mc.sendMessage(`Goodbye ${message.author.name}!`);
 
-      const [votee] = message.content.slice("!".length).trim().split(" ");
-      return voteCommand.run({
-        message,
-        args: [votee],
-      });
+        const voteCommand = commandHandler.getCommand("vote");
+        if (!voteCommand) return;
+
+        const [votee] = message.content.slice("!".length).trim().split(" ");
+        return voteCommand.run({
+          message,
+          args: [votee],
+        });
+      }
     }
   });
 
