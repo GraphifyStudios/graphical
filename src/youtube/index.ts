@@ -1,4 +1,4 @@
-import { Masterchat, stringify } from "masterchat";
+import { Masterchat, stringify, type AddChatItemAction } from "masterchat";
 import { env } from "@/utils/env";
 import { commandHandler, type Message } from "@/command-handler";
 import { addGraphs, getUser, isNewUser, setUser } from "@/utils/db";
@@ -13,25 +13,50 @@ const activeUsers = new Map<
   }
 >();
 
+class YTMessage implements Message {
+  constructor(private chat: AddChatItemAction, private mc: Masterchat) {}
+
+  get channel() {
+    return {
+      id: this.chat.authorChannelId,
+      platform: "youtube",
+    } as const;
+  }
+
+  get author() {
+    return {
+      id: this.chat.authorChannelId,
+      name: this.chat.authorName!,
+      avatar: this.chat.authorPhoto,
+    };
+  }
+
+  get content() {
+    return stringify(this.chat.message!);
+  }
+
+  reply(content: string) {
+    if (content.length === 0) return;
+    if (content.length > 200) {
+      const messages = [];
+      while (content.length > 200) {
+        messages.push(content.substring(0, 200));
+        content = content.substring(200);
+      }
+      for (const message of messages) {
+        this.mc.sendMessage(message);
+      }
+    } else this.mc.sendMessage(content);
+  }
+}
+
 async function startBot(streamId: string) {
   const mc = await Masterchat.init(streamId, {
     credentials: env.YOUTUBE_BOT_CREDENTIALS,
   });
 
   mc.on("chat", async (chat) => {
-    const message: Message = {
-      channel: {
-        id: streamId,
-        platform: "youtube",
-      },
-      content: stringify(chat.message!),
-      author: {
-        id: chat.authorChannelId,
-        name: chat.authorName!,
-        avatar: chat.authorPhoto,
-      },
-      reply: (content: string) => mc.sendMessage(content),
-    };
+    const message = new YTMessage(chat, mc);
 
     if (message.author.id === env.YOUTUBE_BOT_CHANNEL_ID) return;
 
