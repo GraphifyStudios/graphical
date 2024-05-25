@@ -29,11 +29,15 @@ function sendMessage(mc: Masterchat, content: string) {
 }
 
 class YTMessage implements Message {
-  constructor(private chat: AddChatItemAction, private mc: Masterchat) {}
+  constructor(
+    private chat: AddChatItemAction,
+    private mc: Masterchat,
+    private streamId: string
+  ) {}
 
   get channel() {
     return {
-      id: this.chat.authorChannelId,
+      id: this.streamId,
       platform: "youtube",
     } as const;
   }
@@ -61,7 +65,7 @@ async function startBot(streamId: string) {
   });
 
   mc.on("chat", async (chat) => {
-    const message = new YTMessage(chat, mc);
+    const message = new YTMessage(chat, mc, streamId);
     if (message.author.id === env.YOUTUBE_BOT_CHANNEL_ID) return;
 
     if (isNewUser(message.author.id))
