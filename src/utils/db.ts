@@ -18,6 +18,14 @@ interface Database {
     latestVideoId: string;
     latestShortId: string;
   }[];
+  counting: {
+    count: number;
+    lastCounters: {
+      id: string;
+      name: string;
+      count: number;
+    }[];
+  };
 }
 
 const dbPath = join(process.cwd(), "db.json");
@@ -41,6 +49,10 @@ async function initDatabase() {
             latestShortId: "gaQ147zVniE",
           },
         ],
+        counting: {
+          count: 0,
+          lastCounters: [],
+        },
       } satisfies Database)
     );
   }
@@ -139,6 +151,30 @@ export function setLatestVideo(
   if (!channel) return;
   const key = type === "video" ? "latestVideoId" : "latestShortId";
   channel[key] = videoId;
+}
+
+export function getCount() {
+  return db.counting.count;
+}
+
+export function addToCount() {
+  db.counting.count += 1;
+}
+
+export function getLastCounters() {
+  return [...db.counting.lastCounters];
+}
+
+export function addToLastCounters(data: {
+  id: string;
+  name: string;
+  count: number;
+}) {
+  let lastCounters = getLastCounters();
+  if (lastCounters.length > 9) lastCounters = lastCounters.slice(0, 9);
+
+  lastCounters.unshift(data);
+  db.counting.lastCounters = lastCounters;
 }
 
 const backupsPath = join(process.cwd(), "backups");
