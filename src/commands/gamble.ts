@@ -62,4 +62,4 @@ export default {
         break;
     }
   },
-} as Command;
+} satisfies Command;

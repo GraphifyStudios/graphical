@@ -28,4 +28,4 @@ export default {
       }!`
     );
   },
-} as Command;
+} satisfies Command;
