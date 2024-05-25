@@ -129,8 +129,6 @@ async function startBot(streamId: string) {
     }
   });
 
-  startLatestVideos((content) => sendMessage(mc, content));
-
   console.log(`YouTube bot started for stream ID: ${streamId}!`);
 
   mc.listen({ ignoreFirstResponse: true });
@@ -191,6 +189,12 @@ export async function startYouTube() {
       }
     }
   }, graphDuration);
+
+  startLatestVideos((content) => {
+    for (const [mc] of streamsListening) {
+      sendMessage(mc, content);
+    }
+  });
 
   setInterval(async () => {
     const newStreamIds = await getStreams();
