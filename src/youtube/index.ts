@@ -77,6 +77,7 @@ async function startBot(streamId: string) {
       name: message.author.name,
     });
     user.messages++;
+    user.lastMessageTime = Date.now();
     setUser(message.author.id, user);
 
     if (message.content.startsWith("!")) {

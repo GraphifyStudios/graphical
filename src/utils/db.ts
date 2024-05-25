@@ -7,6 +7,7 @@ interface Database {
     name: string;
     graphs: number;
     messages: number;
+    lastMessageTime?: number;
   }[];
   votes: {
     id: string;
@@ -57,6 +58,7 @@ export function createUser(
   const userData = Object.assign(data || {}, {
     graphs: 0,
     messages: 0,
+    lastMessageTime: undefined,
   }) as Database["users"][number];
   db.users.push(userData);
   return userData;
