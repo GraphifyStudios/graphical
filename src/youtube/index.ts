@@ -3,6 +3,7 @@ import { env } from "@/utils/env";
 import { commandHandler, type Message } from "@/command-handler";
 import { addGraphs, ensureUser, isNewUser, setUser } from "@/utils/db";
 import { startLatestVideos } from "./latest-videos";
+import ms from "ms";
 
 const activeUsers = new Map<
   string,
@@ -76,6 +77,19 @@ async function startBot(streamId: string) {
       id: message.author.id,
       name: message.author.name,
     });
+
+    const inactiveTime = 7 * 24 * 60 * 60 * 1000;
+    if (
+      user.lastMessageTime &&
+      Date.now() - user.lastMessageTime > inactiveTime
+    )
+      message.reply(
+        `Welcome back ${message.author.name}! You haven't chatted in ${ms(
+          Date.now() - user.lastMessageTime,
+          { long: true }
+        )}.`
+      );
+
     user.messages++;
     user.lastMessageTime = Date.now();
     setUser(message.author.id, user);
