@@ -19,7 +19,8 @@ export default {
 
     addVote(votee);
 
-    const { votes } = getVote(votee);
+    // this will always exist because of the check in `addVote`
+    const { votes } = getVote(votee)!;
     message.reply(
       `${message.author.name} has voted for ${
         names[votee as keyof typeof names] ?? votee
