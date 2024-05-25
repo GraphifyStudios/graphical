@@ -38,8 +38,8 @@ class YTMessage implements Message {
   get channel() {
     return {
       id: this.streamId,
-      platform: "youtube",
-    } as const;
+      platform: "youtube" as const,
+    };
   }
 
   get author() {
