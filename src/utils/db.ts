@@ -12,6 +12,14 @@ interface Database {
       command: string;
       time: number;
     }[];
+    lastHourly: {
+      graphs: number;
+      hours: number;
+    };
+    lastDaily: {
+      graphs: number;
+      hours: number;
+    };
   }[];
   votes: {
     id: string;
@@ -80,6 +88,10 @@ export function createUser(
     messages: 0,
     lastMessageTime: undefined,
     cooldowns: [],
+    lastHourly: {
+      graphs: 0,
+      hours: 0,
+    },
   }) as Database["users"][number];
   db.users.push(userData);
   return userData;

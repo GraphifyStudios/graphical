@@ -11,6 +11,16 @@ const formatUser = (user: User) => ({
   hours: round(user.graphs / 12, 2),
   messages: user.messages,
   lastMessageTime: user.lastMessageTime,
+  gained: {
+    hour: {
+      graphs: user.graphs - user.lastHourly.graphs,
+      hours: round(user.graphs / 12, 2) - user.lastHourly.hours,
+    },
+    day: {
+      graphs: user.graphs - user.lastDaily.graphs,
+      hours: round(user.graphs / 12, 2) - user.lastDaily.hours,
+    },
+  }
 });
 
 users.get("/", async (c) => {
