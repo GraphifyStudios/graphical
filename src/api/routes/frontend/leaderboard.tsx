@@ -3,7 +3,7 @@ import { round } from "@/utils/functions";
 import { Hono } from "hono";
 
 export const leaderboard = new Hono().get("/", (c) => {
-  const users = getUsers();
+  const users = getUsers().sort((a, b) => b.graphs - a.graphs);
   return c.render(
     <div class="mx-auto flex w-full max-w-3xl flex-col gap-3">
       <h1 class="text-center text-3xl font-bold tracking-tighter">
