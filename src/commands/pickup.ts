@@ -14,6 +14,7 @@ export default {
     const user = ensureUser(message.author.id, {
       id: message.author.id,
       name: message.author.name,
+      avatar: message.author.avatar,
     });
     user.graphs += droppedReward;
     toggleDropped();

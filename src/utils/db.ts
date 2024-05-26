@@ -5,6 +5,7 @@ interface Database {
   users: {
     id: string;
     name: string;
+    avatar: string;
     graphs: number;
     messages: number;
     lastMessageTime?: number;
@@ -81,7 +82,7 @@ const db: Database = await dbFile.json();
 
 export function createUser(
   data: Partial<Database["users"][number]> &
-    Pick<Database["users"][number], "id" | "name">
+    Pick<Database["users"][number], "id" | "name" | "avatar">
 ) {
   const userData = Object.assign(data || {}, {
     graphs: 0,
@@ -110,7 +111,7 @@ export function getUser(id: string) {
 export function ensureUser(
   id: string,
   data: Partial<Database["users"][number]> &
-    Pick<Database["users"][number], "id" | "name">
+    Pick<Database["users"][number], "id" | "name" | "avatar">
 ) {
   const user = getUser(id);
   if (user) return user;

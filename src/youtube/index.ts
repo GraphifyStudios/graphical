@@ -92,6 +92,7 @@ async function startBot(streamId: string) {
     const user = ensureUser(message.author.id, {
       id: message.author.id,
       name: message.author.name,
+      avatar: message.author.avatar,
     });
 
     const inactiveTime = 7 * 24 * 60 * 60 * 1000;

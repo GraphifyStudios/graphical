@@ -26,6 +26,7 @@ export default {
     const user = ensureUser(message.author.id, {
       id: message.author.id,
       name: message.author.name,
+      avatar: message.author.avatar,
     });
     const successful = Math.random() < 0.5;
     const randomPlace = places[random(0, places.length - 1)];
