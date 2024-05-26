@@ -44,11 +44,11 @@ export default {
           );
         }
         break;
-      case false: {
+      case false:
         message.reply(
           `${message.author.name}, you searched in ${randomPlace} and found nothing.`
         );
-      }
+        break;
     }
   },
 } satisfies Command;
