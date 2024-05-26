@@ -1,5 +1,6 @@
 import { readdir } from "node:fs/promises";
 import { addCooldown, ensureUser, getCooldown } from "./utils/db";
+import ms from "ms";
 
 export interface Message {
   channel: {
@@ -56,9 +57,10 @@ class CommandHandler {
       const cooldown = getCooldown(message.author.id, commandName);
       if (cooldown && Date.now() - cooldown.time < command.cooldown) {
         message.reply(
-          `${message.author.name}, you're on cooldown! Please wait ${Math.round(
-            (command.cooldown - (Date.now() - cooldown.time)) / 1000
-          )} seconds before using this command again.`
+          `${message.author.name}, you're on cooldown! Please wait ${ms(
+            command.cooldown - (Date.now() - cooldown.time),
+            { long: true }
+          )} before using this command again.`
         );
         return true;
       }
