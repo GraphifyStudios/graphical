@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { getUser, getUsers, type User } from "@/utils/db";
+import { round } from "@/utils/functions";
 
 export const users = new Hono();
 
@@ -7,7 +8,7 @@ const formatUser = (user: User) => ({
   id: user.id,
   name: user.name,
   graphs: user.graphs,
-  hours: user.graphs / 12,
+  hours: round(user.graphs / 12, 2),
   messages: user.messages,
   lastMessageTime: user.lastMessageTime,
 });

@@ -1,5 +1,6 @@
 import type { Command } from "@/command-handler";
 import { ensureUser } from "@/utils/db";
+import { round } from "@/utils/functions";
 
 export default {
   name: "hours",
@@ -9,7 +10,7 @@ export default {
       id: message.author.id,
       name: message.author.name,
     });
-    const hours = user.graphs / 12;
+    const hours = round(user.graphs / 12, 2);
 
     message.reply(
       `${
