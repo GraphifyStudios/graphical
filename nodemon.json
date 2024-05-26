@@ -4,5 +4,5 @@
   "env": {
     "NODE_ENV": "development"
   },
-  "ext": "ts"
+  "ext": "js,jsx,ts,tsx"
 }
