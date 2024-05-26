@@ -6,7 +6,7 @@ function Navbar() {
       <div class="container px-6 py-3">
         <nav class="flex items-center gap-2">
           <a href="/">
-            <p class="text-xl font-bold tracking-tighter text-blue-500 hover:opacity-80 transition-all">
+            <p class="text-xl font-bold tracking-tighter text-blue-500 transition-all hover:opacity-80">
               Graphical
             </p>
           </a>
@@ -32,7 +32,7 @@ export function Layout({ children }: { children: Child }) {
           rel="stylesheet"
         />
       </head>
-      <body class="bg-blue-950/50 min-h-screen text-slate-50">
+      <body class="min-h-screen bg-blue-950/50 text-slate-50">
         <Navbar />
         <main class="container px-6 py-4">{children}</main>
       </body>

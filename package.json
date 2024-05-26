@@ -20,6 +20,8 @@
     "@types/bun": "latest",
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "^3.4.3"
   },
   "peerDependencies": {

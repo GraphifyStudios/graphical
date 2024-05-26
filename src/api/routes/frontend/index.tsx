@@ -6,7 +6,7 @@ export const frontend = new Hono();
 
 frontend.get(
   "*",
-  jsxRenderer(({ children }) => <Layout children={children} />)
+  jsxRenderer(({ children }) => <Layout children={children} />),
 );
 
 frontend.get("/", (c) => {
