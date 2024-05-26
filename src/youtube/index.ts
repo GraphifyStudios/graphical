@@ -120,6 +120,14 @@ async function startBot(streamId: string) {
         `Someone just dropped ${droppedReward} graphs! Pick them up by running !pickup.`
       );
       toggleDropped();
+      setTimeout(() => {
+        if (!isDropped()) return;
+
+        message.reply(
+          "No one picked up the dropped graphs, and it was blown away by the wind."
+        );
+        toggleDropped();
+      }, 60 * 1000);
     }
 
     if (message.content.startsWith("!")) {
