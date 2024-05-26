@@ -9,7 +9,7 @@ export default {
       id: message.author.id,
       name: message.author.name,
     });
-    const hours = Math.floor(user.graphs / 12);
+    const hours = user.graphs / 12;
 
     message.reply(
       `${
