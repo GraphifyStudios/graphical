@@ -21,7 +21,7 @@ const formatUser = (user: User) => ({
       graphs: user.graphs - user.lastDaily.graphs,
       hours: round(user.graphs / 12, 2) - user.lastDaily.hours,
     },
-  }
+  },
 });
 
 users.get("/", async (c) => {

@@ -24,15 +24,22 @@ export const leaderboard = new Hono().get("/", (c) => {
             {users.map((user, index) => (
               <tr key={user.id} class="border-b border-blue-500">
                 <td class="p-2 text-center">{index + 1}</td>
-                <td class="p-2 flex items-center gap-2">
-                  <img src={user.avatar} alt={user.name} width={32} height={32} />
+                <td class="flex items-center gap-2 p-2">
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    width={32}
+                    height={32}
+                  />
                   <p>{user.name}</p>
                 </td>
                 <td class="p-2 text-center">{user.graphs.toLocaleString()}</td>
                 <td class="p-2 text-center">
                   {round(user.graphs / 12, 2).toLocaleString()}
                 </td>
-                <td class="p-2 text-center">{user.messages.toLocaleString()}</td>
+                <td class="p-2 text-center">
+                  {user.messages.toLocaleString()}
+                </td>
               </tr>
             ))}
           </tbody>
