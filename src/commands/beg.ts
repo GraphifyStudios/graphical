@@ -24,6 +24,7 @@ const characters = [
 export default {
   name: "beg",
   description: "Beg for graphs",
+  cooldown: 30 * 1000,
   run: ({ message }) => {
     const user = ensureUser(message.author.id, {
       id: message.author.id,
