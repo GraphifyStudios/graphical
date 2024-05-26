@@ -140,18 +140,6 @@ async function startBot(streamId: string) {
         if (goodbyeCommands.includes(message.content.toLowerCase()))
           return message.reply(`Goodbye ${message.author.name}!`);
 
-        const firstPart = message.content.split(" ")[0];
-        const num = parseInt(firstPart.split(",").join(""));
-        if (!isNaN(num)) {
-          if (num !== getCount() + 1) return;
-          addToCount();
-          addToLastCounters({
-            id: message.author.id,
-            name: message.author.name,
-            count: getCount(),
-          });
-        }
-
         const voteCommand = commandHandler.getCommand("vote");
         if (!voteCommand) return;
 
@@ -159,6 +147,18 @@ async function startBot(streamId: string) {
         return voteCommand.run({
           message,
           args: [votee],
+        });
+      }
+    } else {
+      const firstPart = message.content.split(" ")[0];
+      const num = parseInt(firstPart.split(",").join(""));
+      if (!isNaN(num)) {
+        if (num !== getCount() + 1) return;
+        addToCount();
+        addToLastCounters({
+          id: message.author.id,
+          name: message.author.name,
+          count: getCount(),
         });
       }
     }
