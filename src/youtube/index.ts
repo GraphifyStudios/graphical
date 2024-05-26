@@ -7,6 +7,7 @@ import {
   addToLastCounters,
   ensureUser,
   getCount,
+  isDropped,
   isNewUser,
   setUser,
   toggleDropped,
@@ -114,7 +115,7 @@ async function startBot(streamId: string) {
 
     const maxChance = 10;
     const droppedChance = random(1, maxChance);
-    if (droppedChance === maxChance) {
+    if (!isDropped() && droppedChance === maxChance) {
       message.reply(
         `Someone just dropped ${droppedReward} graphs! Pick them up by running !pickup.`
       );
