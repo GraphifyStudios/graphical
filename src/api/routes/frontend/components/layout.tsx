@@ -3,14 +3,20 @@ import type { Child } from "hono/jsx";
 function Navbar() {
   return (
     <header className="border-b border-blue-900/80">
-      <div class="container px-6 py-3">
-        <nav class="flex items-center gap-2">
+      <div class="container px-6 py-3 flex items-center justify-between">
+        <nav class="flex items-center gap-4">
           <a href="/">
             <p class="text-xl font-bold tracking-tighter text-blue-500 transition-all hover:opacity-80">
               Graphical
             </p>
           </a>
+          <a href="/lb">
+            <p class="text-sm transition-all hover:opacity-80">
+              Leaderboard
+            </p>
+          </a>
         </nav>
+        <div></div>
       </div>
     </header>
   );
