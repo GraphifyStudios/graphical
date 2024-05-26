@@ -33,6 +33,8 @@ interface Database {
   isDropped: boolean;
 }
 
+export type User = Database["users"][number];
+
 const dbPath = join(process.cwd(), "db.json");
 
 async function initDatabase() {
