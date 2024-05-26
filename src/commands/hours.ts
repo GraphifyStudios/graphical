@@ -16,7 +16,7 @@ export default {
         message.author.name
       }, you currently have ${hours.toLocaleString()} hour${
         hours !== 1 ? "s" : ""
-      }`
+      }.`
     );
   },
 } satisfies Command;
