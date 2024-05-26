@@ -30,6 +30,7 @@ interface Database {
       count: number;
     }[];
   };
+  isDropped: boolean;
 }
 
 const dbPath = join(process.cwd(), "db.json");
@@ -57,6 +58,7 @@ async function initDatabase() {
           count: 0,
           lastCounters: [],
         },
+        isDropped: false,
       } satisfies Database)
     );
   }
@@ -138,6 +140,14 @@ export function addCooldown(id: string, command: string) {
   else user.cooldowns.push({ command, time: Date.now() });
 
   setUser(id, user);
+}
+
+export function isDropped() {
+  return db.isDropped;
+}
+
+export function toggleDropped() {
+  db.isDropped = !db.isDropped;
 }
 
 export function getVotes() {

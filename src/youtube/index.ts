@@ -9,9 +9,11 @@ import {
   getCount,
   isNewUser,
   setUser,
+  toggleDropped,
 } from "@/utils/db";
 import { startLatestVideos } from "./latest-videos";
 import ms from "ms";
+import { droppedReward } from "@/consts";
 
 const activeUsers = new Map<
   string,
@@ -67,6 +69,10 @@ class YTMessage implements Message {
   }
 }
 
+function random(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 async function startBot(streamId: string) {
   const mc = await Masterchat.init(streamId, {
     credentials: env.YOUTUBE_BOT_CREDENTIALS,
@@ -105,6 +111,15 @@ async function startBot(streamId: string) {
     user.messages++;
     user.lastMessageTime = Date.now();
     setUser(message.author.id, user);
+
+    const maxChance = 10;
+    const droppedChance = random(1, maxChance);
+    if (droppedChance === maxChance) {
+      message.reply(
+        `Someone just dropped ${droppedReward} graphs! Pick them up by running !pickup.`
+      );
+      toggleDropped();
+    }
 
     if (message.content.startsWith("!")) {
       const isBotCommand = await commandHandler.handle(message);
