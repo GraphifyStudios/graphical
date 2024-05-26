@@ -15,6 +15,7 @@ import {
 import { startLatestVideos } from "./latest-videos";
 import ms from "ms";
 import { droppedReward } from "@/consts";
+import { random } from "@/utils/functions";
 
 const activeUsers = new Map<
   string,
@@ -68,10 +69,6 @@ class YTMessage implements Message {
   reply(content: string) {
     sendMessage(this.mc, content);
   }
-}
-
-function random(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 async function startBot(streamId: string) {
