@@ -8,6 +8,10 @@ interface Database {
     graphs: number;
     messages: number;
     lastMessageTime?: number;
+    cooldowns: {
+      command: string;
+      time: number;
+    }[];
   }[];
   votes: {
     id: string;
@@ -71,6 +75,7 @@ export function createUser(
     graphs: 0,
     messages: 0,
     lastMessageTime: undefined,
+    cooldowns: [],
   }) as Database["users"][number];
   db.users.push(userData);
   return userData;
@@ -111,6 +116,27 @@ export function addGraphs(id: string, graphs: number) {
   const user = getUser(id);
   if (!user) throw new Error("User not found");
   user.graphs += graphs;
+  setUser(id, user);
+}
+
+export function getCooldown(id: string, command: string) {
+  const user = getUser(id);
+  if (!user) return null;
+  return (
+    user.cooldowns.find((cooldown) => cooldown.command === command) ?? null
+  );
+}
+
+export function addCooldown(id: string, command: string) {
+  const user = getUser(id);
+  if (!user) return;
+
+  const cooldownIndex = user.cooldowns.findIndex(
+    (cooldown) => cooldown.command === command
+  );
+  if (cooldownIndex !== -1) user.cooldowns[cooldownIndex].time = Date.now();
+  else user.cooldowns.push({ command, time: Date.now() });
+
   setUser(id, user);
 }
 

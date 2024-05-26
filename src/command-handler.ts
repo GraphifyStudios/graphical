@@ -1,4 +1,5 @@
 import { readdir } from "node:fs/promises";
+import { addCooldown, ensureUser, getCooldown } from "./utils/db";
 
 export interface Message {
   channel: {
@@ -24,7 +25,6 @@ export interface Command {
 
 class CommandHandler {
   private commands: Map<string, Command>;
-  private cooldowns = new Map<string, number>();
 
   constructor(commands: Command[]) {
     this.commands = new Map(commands.map((command) => [command.name, command]));
@@ -47,22 +47,23 @@ class CommandHandler {
     const command = this.getCommand(commandName);
     if (!command) return false;
 
+    ensureUser(message.author.id, {
+      id: message.author.id,
+      name: message.author.name,
+    });
+
     if (command.cooldown) {
-      const cooldown = this.cooldowns.get(
-        `${commandName}-${message.author.id}`
-      );
-      if (cooldown) {
-        if (Date.now() - cooldown < command.cooldown)
-          return message.reply(
-            `${
-              message.author.name
-            }, you're on cooldown! Please wait ${Math.round(
-              (command.cooldown - (Date.now() - cooldown)) / 1000
-            )} seconds before using this command again.`
-          );
+      const cooldown = getCooldown(message.author.id, commandName);
+      if (cooldown && Date.now() - cooldown.time < command.cooldown) {
+        message.reply(
+          `${message.author.name}, you're on cooldown! Please wait ${Math.round(
+            (command.cooldown - (Date.now() - cooldown.time)) / 1000
+          )} seconds before using this command again.`
+        );
+        return true;
       }
 
-      this.cooldowns.set(`${commandName}-${message.author.id}`, Date.now());
+      addCooldown(message.author.id, commandName);
     }
 
     try {
