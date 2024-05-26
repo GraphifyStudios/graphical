@@ -1,16 +1,14 @@
 import { Hono } from "hono";
 import { env } from "@/utils/env";
 import { api } from "./routes/api";
+import { frontend } from "./routes/frontend";
 
 export async function startApi() {
   console.log("Starting API server...");
 
   const app = new Hono();
 
-  app.get("/", (c) => {
-    return c.text("Hello World!");
-  });
-
+  app.route("/", frontend);
   app.route("/api", api);
 
   Bun.serve({
