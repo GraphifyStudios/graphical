@@ -11,7 +11,9 @@ export default {
       name: message.author.name,
     });
     message.reply(
-      `${message.author.name}, you currently have ${user.graphs} graph${
+      `${
+        message.author.name
+      }, you currently have ${user.graphs.toLocaleString()} graph${
         user.graphs !== 1 ? "s" : ""
       }.`
     );
