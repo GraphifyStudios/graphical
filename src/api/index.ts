@@ -3,7 +3,6 @@ import { env } from "@/utils/env";
 import { api } from "./routes/api";
 import { frontend } from "./routes/frontend";
 import { serveStatic } from "hono/bun";
-import { join } from "path";
 
 export async function startApi() {
   console.log("Starting API server...");
@@ -15,7 +14,7 @@ export async function startApi() {
     serveStatic({
       root: "./",
       rewriteRequestPath: (path) => path.replace("/static", "/src/api/static"),
-    })
+    }),
   );
   app.route("/", frontend);
   app.route("/api", api);

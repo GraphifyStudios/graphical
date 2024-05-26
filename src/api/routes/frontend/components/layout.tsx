@@ -1,7 +1,10 @@
 import type { Child } from "hono/jsx";
 import { useRequestContext } from "hono/jsx-renderer";
 
-const links = [{ href: "/lb", text: "Leaderboard" }];
+const links = [
+  { href: "/lb", text: "Leaderboard" },
+  { href: "/counting", text: "Counting" },
+];
 
 function Navbar() {
   const c = useRequestContext();
@@ -45,7 +48,7 @@ export function Layout({ children }: { children: Child }) {
           crossOrigin=""
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Yantramanav:wght@700&display=swap"
           rel="stylesheet"
         />
       </head>

@@ -4,6 +4,7 @@ import { Layout } from "./components/layout";
 import { leaderboard } from "./leaderboard";
 import { getUsers } from "@/utils/db";
 import { round } from "@/utils/functions";
+import { counting } from "./counting";
 
 export const frontend = new Hono();
 
@@ -32,3 +33,4 @@ frontend.get("/", (c) => {
 });
 
 frontend.route("/lb", leaderboard);
+frontend.route("/counting", counting);
