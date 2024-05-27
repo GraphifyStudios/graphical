@@ -1,43 +1,48 @@
+import { getUser } from "@/utils/db";
 import { Hono } from "hono";
 import { html } from "hono/html";
 import colors from "tailwindcss/colors";
 
-export const counting = new Hono().get("/", (c) => {
+export const user = new Hono().get("/:id", (c) => {
+  const id = c.req.param("id");
+  const user = getUser(id);
+  if (!user) return c.notFound();
+
   return c.render(
     <>
       <div class="mx-auto flex w-full max-w-3xl flex-col gap-3">
-        <div class="rounded-lg bg-blue-900/50 p-4 text-center">
-          <p>Current count:</p>
+        <div class="flex flex-col gap-2 rounded-lg bg-blue-900/50 p-4 text-center">
+          <div class="flex flex-col items-center justify-center gap-2 text-center">
+            <img
+              src={user.avatar}
+              alt={user.name}
+              width={64}
+              height={64}
+              class="rounded-full"
+            />
+            <h1 class="text-xl font-medium">{user.name}</h1>
+          </div>
           <span
-            id="count"
+            id="graphs"
             class="odometer font-['Yantramanav'] text-5xl font-bold sm:text-6xl md:text-7xl"
           >
             0
           </span>
+          <p class="text-xs">Graphs</p>
         </div>
-        <div class="grid grid-cols-1 gap-3 rounded-lg bg-blue-900/50 p-4 md:grid-cols-2 lg:grid-cols-3">
-          {new Array(3).fill(0).map((_, index) => (
-            <div class="flex items-center gap-2">
-              <img
-                src="https://yt3.ggpht.com/87vxtSH644l0tvZWNcTuz418FgR4TOJkbbx0qpEodcgct6V2RqkDaEos4amPaEwqPIPt4J92Mw=s800-c-k-c0x00ffffff-no-rj"
-                width={48}
-                height={48}
-                id={`avatar-${index + 1}`}
-                class="rounded-md"
-              />
-              <div>
-                <p
-                  id={`count-${index + 1}`}
-                  class="font-['Yantramanav'] text-3xl font-bold"
-                >
-                  0
-                </p>
-                <p id={`name-${index + 1}`} class="text-xs">
-                  ToastedToast
-                </p>
-              </div>
-            </div>
-          ))}
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div class="flex flex-col gap-1 rounded-lg bg-blue-900/50 p-4 text-center">
+            <span id="messages" class="odometer font-['Yantramanav'] text-4xl">
+              0
+            </span>
+            <p class="text-xs">Messages</p>
+          </div>
+          <div class="flex flex-col gap-1 rounded-lg bg-blue-900/50 p-4 text-center">
+            <span id="hours" class="odometer font-['Yantramanav'] text-4xl">
+              0
+            </span>
+            <p class="text-xs">Hours</p>
+          </div>
         </div>
         <div class="rounded-lg bg-blue-900/50 p-4">
           <div id="chart" />
@@ -131,35 +136,16 @@ export const counting = new Hono().get("/", (c) => {
           });
 
           setInterval(() => {
-            fetch("/api/counting")
+            fetch("/api/users/${id}")
               .then((res) => res.json())
               .then((data) => {
-                document.getElementById("count").textContent = data.count;
-
-                document.getElementById("avatar-1").src =
-                  data.lastCounters[0].avatar;
-                document.getElementById("count-1").textContent =
-                  data.lastCounters[0].count;
-                document.getElementById("name-1").textContent =
-                  data.lastCounters[0].name;
-
-                document.getElementById("avatar-2").src =
-                  data.lastCounters[1].avatar;
-                document.getElementById("count-2").textContent =
-                  data.lastCounters[1].count;
-                document.getElementById("name-2").textContent =
-                  data.lastCounters[1].name;
-
-                document.getElementById("avatar-3").src =
-                  data.lastCounters[2].avatar;
-                document.getElementById("count-3").textContent =
-                  data.lastCounters[2].count;
-                document.getElementById("name-3").textContent =
-                  data.lastCounters[2].name;
+                document.getElementById("graphs").textContent = data.graphs;
+                document.getElementById("messages").textContent = data.messages;
+                document.getElementById("hours").textContent = data.hours;
 
                 if (chart.series[0].points.length >= 3600)
                   chart.series[0].data[0].remove();
-                chart.series[0].addPoint([Date.now(), parseInt(data.count)]);
+                chart.series[0].addPoint([Date.now(), parseInt(data.graphs)]);
               });
           }, 2000);
         </script>
