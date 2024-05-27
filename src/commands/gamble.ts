@@ -22,6 +22,7 @@ export default {
     const user = ensureUser(message.author.id, {
       id: message.author.id,
       name: message.author.name,
+      avatar: message.author.avatar,
     });
     if (amount > user.graphs)
       return message.reply(

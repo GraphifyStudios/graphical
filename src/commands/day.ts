@@ -10,6 +10,7 @@ export default {
     const user = ensureUser(message.author.id, {
       id: message.author.id,
       name: message.author.name,
+      avatar: message.author.avatar,
     });
     const lastDaily = user.lastDaily;
     const graphsGained = user.graphs - lastDaily.graphs;

@@ -177,3 +177,6 @@ dist
 # Database
 db.json
 backups/
+
+# TailwindCSS Styles
+/src/api/static/styles.css

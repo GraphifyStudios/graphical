@@ -1,16 +1,22 @@
 import { Hono } from "hono";
 import { env } from "@/utils/env";
 import { api } from "./routes/api";
+import { frontend } from "./routes/frontend";
+import { serveStatic } from "hono/bun";
 
 export async function startApi() {
   console.log("Starting API server...");
 
   const app = new Hono();
 
-  app.get("/", (c) => {
-    return c.text("Hello World!");
-  });
-
+  app.get(
+    "/static/*",
+    serveStatic({
+      root: "./",
+      rewriteRequestPath: (path) => path.replace("/static", "/src/api/static"),
+    }),
+  );
+  app.route("/", frontend);
   app.route("/api", api);
 
   Bun.serve({

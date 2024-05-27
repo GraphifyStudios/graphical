@@ -5,6 +5,7 @@ interface Database {
   users: {
     id: string;
     name: string;
+    avatar: string;
     graphs: number;
     messages: number;
     lastMessageTime?: number;
@@ -35,6 +36,7 @@ interface Database {
     lastCounters: {
       id: string;
       name: string;
+      avatar: string;
       count: number;
     }[];
   };
@@ -69,7 +71,7 @@ async function initDatabase() {
           lastCounters: [],
         },
         isDropped: false,
-      } satisfies Database)
+      } satisfies Database),
     );
   }
 }
@@ -81,7 +83,7 @@ const db: Database = await dbFile.json();
 
 export function createUser(
   data: Partial<Database["users"][number]> &
-    Pick<Database["users"][number], "id" | "name">
+    Pick<Database["users"][number], "id" | "name" | "avatar">,
 ) {
   const userData = Object.assign(data || {}, {
     graphs: 0,
@@ -110,7 +112,7 @@ export function getUser(id: string) {
 export function ensureUser(
   id: string,
   data: Partial<Database["users"][number]> &
-    Pick<Database["users"][number], "id" | "name">
+    Pick<Database["users"][number], "id" | "name" | "avatar">,
 ) {
   const user = getUser(id);
   if (user) return user;
@@ -148,7 +150,7 @@ export function addCooldown(id: string, command: string) {
   if (!user) return;
 
   const cooldownIndex = user.cooldowns.findIndex(
-    (cooldown) => cooldown.command === command
+    (cooldown) => cooldown.command === command,
   );
   if (cooldownIndex !== -1) user.cooldowns[cooldownIndex].time = Date.now();
   else user.cooldowns.push({ command, time: Date.now() });
@@ -195,7 +197,7 @@ export function getLatestVideos(channelId: string) {
 export function setLatestVideo(
   channelId: string,
   videoId: string,
-  type: "video" | "short"
+  type: "video" | "short",
 ) {
   const channel = db.latestVideos.find((c) => c.channelId === channelId);
   if (!channel) return;
@@ -218,6 +220,7 @@ export function getLastCounters() {
 export function addToLastCounters(data: {
   id: string;
   name: string;
+  avatar: string;
   count: number;
 }) {
   let lastCounters = getLastCounters();
@@ -233,7 +236,7 @@ setInterval(async () => {
   if (!(await exists(backupsPath))) await mkdir(backupsPath);
   await Bun.write(
     join(backupsPath, `db-${Date.now()}.json`),
-    JSON.stringify(db)
+    JSON.stringify(db),
   );
 
   await Bun.write(dbPath, JSON.stringify(db));

@@ -44,7 +44,7 @@ class YTMessage implements Message {
   constructor(
     private chat: AddChatItemAction,
     private mc: Masterchat,
-    private streamId: string
+    private streamId: string,
   ) {}
 
   get channel() {
@@ -92,6 +92,7 @@ async function startBot(streamId: string) {
     const user = ensureUser(message.author.id, {
       id: message.author.id,
       name: message.author.name,
+      avatar: message.author.avatar,
     });
 
     const inactiveTime = 7 * 24 * 60 * 60 * 1000;
@@ -102,8 +103,8 @@ async function startBot(streamId: string) {
       message.reply(
         `Welcome back ${message.author.name}! You haven't chatted in ${ms(
           Date.now() - user.lastMessageTime,
-          { long: true }
-        )}.`
+          { long: true },
+        )}.`,
       );
 
     user.messages++;
@@ -114,14 +115,14 @@ async function startBot(streamId: string) {
     const droppedChance = random(1, maxChance);
     if (!isDropped() && droppedChance === maxChance) {
       message.reply(
-        `Someone just dropped ${droppedReward} graphs! Pick them up by running !pickup.`
+        `Someone just dropped ${droppedReward} graphs! Pick them up by running !pickup.`,
       );
       toggleDropped();
       setTimeout(() => {
         if (!isDropped()) return;
 
         message.reply(
-          "No one picked up the dropped graphs, and it was blown away by the wind."
+          "No one picked up the dropped graphs, and it was blown away by the wind.",
         );
         toggleDropped();
       }, 60 * 1000);
@@ -164,6 +165,7 @@ async function startBot(streamId: string) {
         addToLastCounters({
           id: message.author.id,
           name: message.author.name,
+          avatar: message.author.avatar,
           count: getCount(),
         });
       }
@@ -181,15 +183,16 @@ async function getStreams(): Promise<string[]> {
   const res = await fetch(url);
   const html = await res.text();
   const initialData = JSON.parse(
-    "{" + html.split("var ytInitialData = {")[1].split("};")[0] + "}"
+    "{" + html.split("var ytInitialData = {")[1].split("};")[0] + "}",
   );
   const streams = initialData.contents.twoColumnBrowseResultsRenderer.tabs
     .find((tab: any) => tab.tabRenderer.title === "Live")
     ?.tabRenderer.content.richGridRenderer.contents.filter(
-      (stream: any) => !stream.richItemRenderer.content.videoRenderer.lengthText
+      (stream: any) =>
+        !stream.richItemRenderer.content.videoRenderer.lengthText,
     )
     .map(
-      (stream: any) => stream.richItemRenderer.content.videoRenderer.videoId
+      (stream: any) => stream.richItemRenderer.content.videoRenderer.videoId,
     );
   return streams;
 }
@@ -225,7 +228,7 @@ export async function startYouTube() {
           mc,
           `${activeUsers.size} user${activeUsers.size !== 1 ? "s" : ""} ${
             activeUsers.size !== 1 ? "have" : "has"
-          } been given graphs!`
+          } been given graphs!`,
         );
       }
     }
@@ -237,18 +240,21 @@ export async function startYouTube() {
     }
   });
 
-  setInterval(async () => {
-    const newStreamIds = await getStreams();
-    const streamsToRemove = streamsListening
-      .filter(([, streamId]) => !newStreamIds.includes(streamId))
-      .map(([mc]) => mc);
-    await Promise.all(streamsToRemove.map((mc) => mc.stop()));
+  setInterval(
+    async () => {
+      const newStreamIds = await getStreams();
+      const streamsToRemove = streamsListening
+        .filter(([, streamId]) => !newStreamIds.includes(streamId))
+        .map(([mc]) => mc);
+      await Promise.all(streamsToRemove.map((mc) => mc.stop()));
 
-    const newStreams = newStreamIds.filter(
-      (streamId) => !streamsListening.some(([, id]) => id === streamId)
-    );
-    for (const streamId of newStreams) {
-      streamsListening.push(await startBot(streamId));
-    }
-  }, 5 * 60 * 1000);
+      const newStreams = newStreamIds.filter(
+        (streamId) => !streamsListening.some(([, id]) => id === streamId),
+      );
+      for (const streamId of newStreams) {
+        streamsListening.push(await startBot(streamId));
+      }
+    },
+    5 * 60 * 1000,
+  );
 }

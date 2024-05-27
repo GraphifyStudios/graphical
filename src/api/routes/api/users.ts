@@ -7,6 +7,7 @@ export const users = new Hono();
 const formatUser = (user: User) => ({
   id: user.id,
   name: user.name,
+  avatar: user.avatar,
   graphs: user.graphs,
   hours: round(user.graphs / 12, 2),
   messages: user.messages,
@@ -20,7 +21,7 @@ const formatUser = (user: User) => ({
       graphs: user.graphs - user.lastDaily.graphs,
       hours: round(user.graphs / 12, 2) - user.lastDaily.hours,
     },
-  }
+  },
 });
 
 users.get("/", async (c) => {

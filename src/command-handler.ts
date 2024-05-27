@@ -20,6 +20,7 @@ export interface Command {
   name: string;
   aliases?: string[];
   description?: string;
+  usage?: string;
   cooldown?: number;
   run: ({ message, args }: { message: Message; args: string[] }) => any;
 }
@@ -35,7 +36,7 @@ class CommandHandler {
     return (
       this.commands.get(name.toLowerCase()) ??
       [...this.commands.values()].find((command) =>
-        command.aliases?.includes(name.toLowerCase())
+        command.aliases?.includes(name.toLowerCase()),
       )
     );
   }
@@ -51,6 +52,7 @@ class CommandHandler {
     ensureUser(message.author.id, {
       id: message.author.id,
       name: message.author.name,
+      avatar: message.author.avatar,
     });
 
     if (command.cooldown) {
@@ -59,8 +61,8 @@ class CommandHandler {
         message.reply(
           `${message.author.name}, you're on cooldown! Please wait ${ms(
             command.cooldown - (Date.now() - cooldown.time),
-            { long: true }
-          )} before using this command again.`
+            { long: true },
+          )} before using this command again.`,
         );
         return true;
       }
