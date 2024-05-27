@@ -12,7 +12,7 @@ function Navbar() {
   const { pathname } = new URL(c.req.url);
 
   return (
-    <header className="border-b border-blue-900/80">
+    <header className="border-b border-blue-900/50">
       <div class="container flex items-center justify-between px-6 py-3">
         <nav class="flex items-center gap-4">
           <a href="/">
