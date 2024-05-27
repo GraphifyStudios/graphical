@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { Layout } from "./components/layout";
-import { leaderboard } from "./leaderboard";
+import { leaderboard } from "./pages/leaderboard";
 import { getUsers } from "@/utils/db";
 import { round } from "@/utils/functions";
-import { counting } from "./counting";
+import { counting } from "./pages/counting";
 
 export const frontend = new Hono();
 
