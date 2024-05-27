@@ -2,6 +2,7 @@ import type { Child } from "hono/jsx";
 import { useRequestContext } from "hono/jsx-renderer";
 
 const links = [
+  { href: "/commands", text: "Commands" },
   { href: "/lb/users", text: "User Leaderboard" },
   { href: "/lb/votes", text: "Vote Leaderboard" },
   { href: "/counting", text: "Counting" },

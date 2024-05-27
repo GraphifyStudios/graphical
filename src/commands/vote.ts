@@ -10,11 +10,12 @@ const names = {
 export default {
   name: "vote",
   description: "Vote for someone",
+  usage: "!vote <user>",
   run: ({ message, args }) => {
     const votee = args[0]?.toLowerCase();
     if (!votee)
       return message.reply(
-        `${message.author.name}, please specify someone to vote for.`
+        `${message.author.name}, please specify someone to vote for.`,
       );
 
     addVote(votee);
@@ -26,7 +27,7 @@ export default {
         names[votee as keyof typeof names] ?? votee
       }${
         votes > 1 ? `, and so has ${votes.toLocaleString()} other people` : ""
-      }!`
+      }!`,
     );
   },
 } satisfies Command;

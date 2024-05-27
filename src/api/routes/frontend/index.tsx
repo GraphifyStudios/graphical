@@ -6,6 +6,7 @@ import { getUsers } from "@/utils/db";
 import { round } from "@/utils/functions";
 import { counting } from "./pages/counting";
 import { user } from "./pages/user";
+import { commands } from "./pages/commands";
 
 export const frontend = new Hono();
 
@@ -33,6 +34,7 @@ frontend.get("/", (c) => {
   );
 });
 
-frontend.route("/user", user);
+frontend.route("/commands", commands);
 frontend.route("/lb", leaderboard);
+frontend.route("/user", user);
 frontend.route("/counting", counting);
