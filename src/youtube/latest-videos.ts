@@ -94,11 +94,9 @@ export async function startLatestVideos(
                     `${channelName} just uploaded a new short titled "${currentShort.snippet.title}": https://youtube.com/shorts/${currentShortId}`,
                   );
                 }
-              })
-              .catch((err) => console.error(err));
+              });
           }
-        })
-        .catch((err) => console.error(err));
+        });
     } catch (err) {
       console.error(err);
     }
