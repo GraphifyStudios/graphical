@@ -17,20 +17,20 @@ export default {
     switch (successful) {
       case true:
         {
-          const reward = random(1_000, 5_000);
+          const reward = random(100, 500);
           user.graphs += reward;
           setUser(message.author.id, user);
 
           message.reply(
             `${
               message.author.name
-            }, you analyzed some statistics and got ${reward.toLocaleString()} graphs!`
+            }, you analyzed some statistics and got ${reward.toLocaleString()} graphs!`,
           );
         }
         break;
       case false:
         message.reply(
-          `${message.author.name}, you analyzed statisics but your boss decided to pay you in exposure.`
+          `${message.author.name}, you analyzed statisics but your boss decided to pay you in exposure.`,
         );
         break;
     }
