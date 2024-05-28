@@ -44,6 +44,22 @@ export default {
         `${message.author.name}, the user you're trying to rob has no graphs.`,
       );
 
+    if (user.items.includes("padlock")) {
+      const amount = random(1, round(user.graphs / 15));
+      user.graphs += amount;
+      author.graphs -= amount;
+
+      const index = user.items.indexOf("padlock");
+      user.items.splice(index, 1);
+
+      setUser(message.author.id, author);
+      setUser(user.id, user);
+
+      return message.reply(
+        `${message.author.name}, you tried to steal from ${user.name}'s wallet but they had a padlock and you couldn't open it in time and got caught and had to pay back ${amount.toLocaleString()} graphs.`,
+      );
+    }
+
     const successful = Math.random() < 0.5;
 
     switch (successful) {

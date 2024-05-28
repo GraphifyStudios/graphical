@@ -14,6 +14,7 @@ interface Database {
       command: string;
       time: number;
     }[];
+    items: string[];
     lastHourly: {
       graphs: number;
       hours: number;
@@ -42,6 +43,12 @@ interface Database {
     }[];
   };
   isDropped: boolean;
+  stream?: {
+    id: string;
+    name: string;
+    avatar: string;
+    time: number;
+  } | null;
 }
 
 export type User = Database["users"][number];
@@ -92,7 +99,12 @@ export function createUser(
     messages: 0,
     lastMessageTime: undefined,
     cooldowns: [],
+    items: [],
     lastHourly: {
+      graphs: 0,
+      hours: 0,
+    },
+    lastDaily: {
       graphs: 0,
       hours: 0,
     },
@@ -232,6 +244,25 @@ export function addToLastCounters(data: {
 
   lastCounters.unshift(data);
   db.counting.lastCounters = lastCounters;
+}
+
+export function getStream() {
+  return db.stream;
+}
+
+export function hasStream() {
+  return db.stream ? Date.now() - db.stream.time < 2 * 1000 * 60 * 60 : false;
+}
+
+export function setStream(
+  data: { id: string; name: string; avatar: string } | null,
+) {
+  db.stream = data
+    ? {
+        ...data,
+        time: Date.now(),
+      }
+    : null;
 }
 
 const backupsPath = join(process.cwd(), "backups");
