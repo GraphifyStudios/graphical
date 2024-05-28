@@ -20,7 +20,10 @@ api.get("/counting", (c) => {
 
 api.get("/total", (c) => {
   const users = getUsers();
-  const totalGraphs = users.reduce((acc, user) => acc + user.graphs, 0);
+  const totalGraphs = users.reduce(
+    (acc, user) => acc + (user.graphs + user.bank),
+    0,
+  );
   const totalHours = round(totalGraphs / 12, 2);
   const totalMessages = users.reduce((acc, user) => acc + user.messages, 0);
 
