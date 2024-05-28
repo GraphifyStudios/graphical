@@ -259,9 +259,9 @@ export function setStream(
 ) {
   db.stream = data
     ? {
-        ...data,
-        time: Date.now(),
-      }
+      ...data,
+      time: Date.now(),
+    }
     : null;
 }
 
@@ -275,4 +275,4 @@ setInterval(async () => {
   );
 
   await Bun.write(dbPath, JSON.stringify(db));
-}, 10_000);
+}, 60_000);
