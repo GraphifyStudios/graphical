@@ -4,7 +4,7 @@ import {
 } from "../utils/db";
 
 export async function startLatestVideos(
-  sendMessage: (content: string) => void
+  sendMessage: (content: string) => void,
 ) {
   function getLatestVideos(channelId: string, channelName: string) {
     const ISO8601Duration = (ISO: any) => {
@@ -47,8 +47,8 @@ export async function startLatestVideos(
       fetch(
         `https://yt.lemnoslife.com/noKey/playlistItems?part=snippet&fields=items/snippet/resourceId/videoId&order=date&maxResults=10&playlistId=${channelId.replace(
           "UC",
-          "UU"
-        )}`
+          "UU",
+        )}`,
       )
         .then((res) => res.json())
         .then((videos) => {
@@ -59,8 +59,8 @@ export async function startLatestVideos(
           if (vidIds !== null) {
             fetch(
               `https://yt.lemnoslife.com/noKey/videos?part=snippet,liveStreamingDetails,contentDetails&fields=items(id,snippet/title,snippet/publishedAt,liveStreamingDetails,contentDetails/duration)&id=${vidIds.join(
-                ","
-              )}`
+                ",",
+              )}`,
             )
               .then((res) => res.json())
               .then((filteredVideos) => {
@@ -68,13 +68,13 @@ export async function startLatestVideos(
                 const currentVideo = filteredVids.filter(
                   (filteredVid: any) =>
                     ISO8601Duration(filteredVid.contentDetails.duration) > 60 &&
-                    !filteredVid.liveStreamingDetails
+                    !filteredVid.liveStreamingDetails,
                 )[0];
                 const currentVideoId = currentVideo.id;
                 const currentShort = filteredVids.filter(
                   (filteredVid: any) =>
                     ISO8601Duration(filteredVid.contentDetails.duration) <=
-                      60 && !filteredVid.liveStreamingDetails
+                      60 && !filteredVid.liveStreamingDetails,
                 )[0];
                 const currentShortId = currentShort.id;
 
@@ -85,18 +85,20 @@ export async function startLatestVideos(
                 if (lastVideoId !== currentVideoId) {
                   setLatestVideo(channelId, currentVideoId, "video");
                   sendMessage(
-                    `${channelName} just uploaded a new video titled "${currentVideo.snippet.title}": https://youtu.be/${currentVideoId}`
+                    `${channelName} just uploaded a new video titled "${currentVideo.snippet.title}": https://youtu.be/${currentVideoId}`,
                   );
                 }
                 if (lastShortId !== currentShortId) {
                   setLatestVideo(channelId, currentShortId, "short");
                   sendMessage(
-                    `${channelName} just uploaded a new short titled "${currentShort.snippet.title}": https://youtube.com/shorts/${currentShortId}`
+                    `${channelName} just uploaded a new short titled "${currentShort.snippet.title}": https://youtube.com/shorts/${currentShortId}`,
                   );
                 }
-              });
+              })
+              .catch((err) => console.error(err));
           }
-        });
+        })
+        .catch((err) => console.error(err));
     } catch (err) {
       console.error(err);
     }
@@ -106,10 +108,10 @@ export async function startLatestVideos(
   getLatestVideos("UCgG5aRcYGzPPB4UG3mS-ZNg", "Graphify");
   setInterval(
     () => getLatestVideos("UCX6OQ3DkcsbYNE6H8uQQuVA", "MrBeast"),
-    4000
+    4000,
   );
   setInterval(
     () => getLatestVideos("UCgG5aRcYGzPPB4UG3mS-ZNg", "Graphify"),
-    30000
+    30000,
   );
 }
