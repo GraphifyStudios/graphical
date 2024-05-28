@@ -1,11 +1,10 @@
+import { env } from "@/utils/env";
 import {
   getLatestVideos as getLatestVideosFromDb,
   setLatestVideo,
 } from "../utils/db";
 
-export async function startLatestVideos(
-  sendMessage: (content: string) => void,
-) {
+export function startLatestVideos(sendMessage: (content: string) => void) {
   function getLatestVideos(channelId: string, channelName: string) {
     const ISO8601Duration = (ISO: any) => {
       const units = {
@@ -45,10 +44,10 @@ export async function startLatestVideos(
 
     try {
       fetch(
-        `https://yt.lemnoslife.com/noKey/playlistItems?part=snippet&fields=items/snippet/resourceId/videoId&order=date&maxResults=10&playlistId=${channelId.replace(
+        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&fields=items/snippet/resourceId/videoId&order=date&maxResults=10&playlistId=${channelId.replace(
           "UC",
           "UU",
-        )}`,
+        )}&key=${env.YOUTUBE_API_KEY}`,
       )
         .then((res) => res.json())
         .then((videos) => {
@@ -58,9 +57,9 @@ export async function startLatestVideos(
 
           if (vidIds !== null) {
             fetch(
-              `https://yt.lemnoslife.com/noKey/videos?part=snippet,liveStreamingDetails,contentDetails&fields=items(id,snippet/title,snippet/publishedAt,liveStreamingDetails,contentDetails/duration)&id=${vidIds.join(
+              `https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails,contentDetails&fields=items(id,snippet/title,snippet/publishedAt,liveStreamingDetails,contentDetails/duration)&id=${vidIds.join(
                 ",",
-              )}`,
+              )}&key=${env.YOUTUBE_API_KEY}`,
             )
               .then((res) => res.json())
               .then((filteredVideos) => {
