@@ -4,7 +4,7 @@ import { Hono } from "hono";
 
 export const leaderboard = new Hono()
   .get("/users", (c) => {
-    const users = getUsers().sort((a, b) => b.graphs - a.graphs);
+    const users = getUsers().sort((a, b) => getGraphs(b) - getGraphs(a));
     return c.render(
       <div class="mx-auto flex w-full max-w-3xl flex-col gap-3">
         <h1 class="text-center text-3xl font-bold tracking-tighter">
