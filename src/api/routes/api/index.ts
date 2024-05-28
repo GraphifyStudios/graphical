@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { users } from "./users";
 import { votes } from "./votes";
-import { getCount, getLastCounters, getUsers } from "@/utils/db";
+import { getCount, getLastCounters, getStream, getUsers } from "@/utils/db";
 import { round } from "@/utils/functions";
 
 export const api = new Hono();
@@ -27,4 +27,9 @@ api.get("/total", (c) => {
     totalHours,
     totalMessages,
   });
+});
+
+api.get("/stream", (c) => {
+  const stream = getStream();
+  return c.json({ currentUser: stream ?? null });
 });
