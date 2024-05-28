@@ -23,7 +23,7 @@ export default {
       return message.reply(
         `${message.author.name}, please specify a valid amount of graphs to deposit.`,
       );
-    if (amount > user.graphs)
+    if (amount > user.graphs || user.graphs === 0)
       return message.reply(
         `${message.author.name}, you don't have enough graphs to deposit.`,
       );
