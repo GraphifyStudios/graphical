@@ -13,7 +13,7 @@ const formatUser = (user: User) => ({
     bank: user.bank,
     total: user.graphs + user.bank,
   },
-  hours: round(user.graphs / 12, 2),
+  hours: round((user.graphs + user.bank) / 12, 2),
   messages: user.messages,
   lastMessageTime: user.lastMessageTime,
   gained: {

@@ -32,6 +32,20 @@ export const user = new Hono().get("/:id", (c) => {
         </div>
         <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div class="flex flex-col gap-1 rounded-lg bg-blue-900/50 p-4 text-center">
+            <span id="wallet" class="odometer font-['Yantramanav'] text-4xl">
+              0
+            </span>
+            <p class="text-xs">Wallet</p>
+          </div>
+          <div class="flex flex-col gap-1 rounded-lg bg-blue-900/50 p-4 text-center">
+            <span id="bank" class="odometer font-['Yantramanav'] text-4xl">
+              0
+            </span>
+            <p class="text-xs">Bank</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div class="flex flex-col gap-1 rounded-lg bg-blue-900/50 p-4 text-center">
             <span id="messages" class="odometer font-['Yantramanav'] text-4xl">
               0
             </span>
@@ -139,13 +153,20 @@ export const user = new Hono().get("/:id", (c) => {
             fetch("/api/users/${id}")
               .then((res) => res.json())
               .then((data) => {
-                document.getElementById("graphs").textContent = data.graphs;
+                document.getElementById("graphs").textContent =
+                  data.graphs.total;
+                document.getElementById("wallet").textContent =
+                  data.graphs.wallet;
+                document.getElementById("bank").textContent = data.graphs.bank;
                 document.getElementById("messages").textContent = data.messages;
                 document.getElementById("hours").textContent = data.hours;
 
                 if (chart.series[0].points.length >= 3600)
                   chart.series[0].data[0].remove();
-                chart.series[0].addPoint([Date.now(), parseInt(data.graphs)]);
+                chart.series[0].addPoint([
+                  Date.now(),
+                  parseInt(data.graphs.total),
+                ]);
               });
           }, 2000);
         </script>
