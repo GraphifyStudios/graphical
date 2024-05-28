@@ -3,8 +3,11 @@ import { users } from "./users";
 import { votes } from "./votes";
 import { getCount, getLastCounters, getStream, getUsers } from "@/utils/db";
 import { round } from "@/utils/functions";
+import { cors } from "hono/cors";
 
 export const api = new Hono();
+
+api.get("*", cors());
 
 api.route("/users", users);
 api.route("/votes", votes);
