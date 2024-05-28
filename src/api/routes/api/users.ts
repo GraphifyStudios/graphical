@@ -8,7 +8,11 @@ const formatUser = (user: User) => ({
   id: user.id,
   name: user.name,
   avatar: user.avatar,
-  graphs: user.graphs,
+  graphs: {
+    wallet: user.graphs,
+    bank: user.bank,
+    total: user.graphs + user.bank,
+  },
   hours: round(user.graphs / 12, 2),
   messages: user.messages,
   lastMessageTime: user.lastMessageTime,

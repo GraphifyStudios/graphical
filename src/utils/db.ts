@@ -7,6 +7,7 @@ interface Database {
     name: string;
     avatar: string;
     graphs: number;
+    bank: number;
     messages: number;
     lastMessageTime?: number;
     cooldowns: {
@@ -87,6 +88,7 @@ export function createUser(
 ) {
   const userData = Object.assign(data || {}, {
     graphs: 0,
+    bank: 0,
     messages: 0,
     lastMessageTime: undefined,
     cooldowns: [],
@@ -157,6 +159,8 @@ export function addCooldown(id: string, command: string) {
 
   setUser(id, user);
 }
+
+export const getGraphs = (user: User) => user.graphs + user.bank;
 
 export function isDropped() {
   return db.isDropped;

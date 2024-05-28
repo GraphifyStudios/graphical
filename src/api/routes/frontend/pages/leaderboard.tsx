@@ -1,4 +1,4 @@
-import { getUsers, getVotes } from "@/utils/db";
+import { getGraphs, getUsers, getVotes } from "@/utils/db";
 import { round } from "@/utils/functions";
 import { Hono } from "hono";
 
@@ -41,10 +41,10 @@ export const leaderboard = new Hono()
                     </a>
                   </td>
                   <td class="p-2 text-center">
-                    {user.graphs.toLocaleString()}
+                    {getGraphs(user).toLocaleString()}
                   </td>
                   <td class="p-2 text-center">
-                    {round(user.graphs / 12, 2).toLocaleString()}
+                    {round(getGraphs(user) / 12, 2).toLocaleString()}
                   </td>
                   <td class="p-2 text-center">
                     {user.messages.toLocaleString()}
