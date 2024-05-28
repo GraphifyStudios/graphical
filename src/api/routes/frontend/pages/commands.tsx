@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { commands as allCommands } from "@/command-handler";
+import ms from "ms";
 
 export const commands = new Hono().get("/", (c) => {
   return c.render(
@@ -24,6 +25,12 @@ export const commands = new Hono().get("/", (c) => {
               {!!command.usage && (
                 <p>
                   <strong>Usage</strong>: {command.usage}
+                </p>
+              )}
+              {!!command.cooldown && (
+                <p>
+                  <strong>Cooldown</strong>:{" "}
+                  {ms(command.cooldown, { long: true })}
                 </p>
               )}
             </div>
