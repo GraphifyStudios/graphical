@@ -45,7 +45,7 @@ class YTMessage implements Message {
     private chat: AddChatItemAction,
     private mc: Masterchat,
     private streamId: string,
-  ) {}
+  ) { }
 
   get channel() {
     return {
@@ -71,7 +71,7 @@ class YTMessage implements Message {
   }
 }
 
-async function startBot(streamId: string) {
+async function startBot(streamId: string, removeThis: () => void) {
   const mc = await Masterchat.init(streamId, {
     credentials: env.YOUTUBE_BOT_CREDENTIALS,
   });
@@ -172,6 +172,11 @@ async function startBot(streamId: string) {
     }
   });
 
+  mc.on("end", () => {
+    mc.stop();
+    removeThis();
+  });
+
   console.log(`YouTube bot started for stream ID: ${streamId}!`);
 
   mc.listen({ ignoreFirstResponse: true });
@@ -202,9 +207,18 @@ export async function startYouTube() {
 
   const streamsListening: Awaited<ReturnType<typeof startBot>>[] = [];
 
+  function removeStreamFn(streamId: string) {
+    return () => streamsListening.splice(
+      streamsListening.findIndex(([, id]) => id === streamId),
+      1,
+    );
+  }
+
   const streamIds = await getStreams();
   for (const streamId of streamIds) {
-    streamsListening.push(await startBot(streamId));
+    streamsListening.push(
+      await startBot(streamId, removeStreamFn(streamId)),
+    );
   }
 
   const graphDuration = 1 * 60 * 1000;
@@ -226,8 +240,7 @@ export async function startYouTube() {
       for (const [mc] of streamsListening) {
         sendMessage(
           mc,
-          `${activeUsers.size} user${activeUsers.size !== 1 ? "s" : ""} ${
-            activeUsers.size !== 1 ? "have" : "has"
+          `${activeUsers.size} user${activeUsers.size !== 1 ? "s" : ""} ${activeUsers.size !== 1 ? "have" : "has"
           } been given graphs!`,
         );
       }
@@ -243,16 +256,11 @@ export async function startYouTube() {
   setInterval(
     async () => {
       const newStreamIds = await getStreams();
-      const streamsToRemove = streamsListening
-        .filter(([, streamId]) => !newStreamIds.includes(streamId))
-        .map(([mc]) => mc);
-      await Promise.all(streamsToRemove.map((mc) => mc.stop()));
-
       const newStreams = newStreamIds.filter(
         (streamId) => !streamsListening.some(([, id]) => id === streamId),
       );
       for (const streamId of newStreams) {
-        streamsListening.push(await startBot(streamId));
+        streamsListening.push(await startBot(streamId, removeStreamFn(streamId)));
       }
     },
     5 * 60 * 1000,
