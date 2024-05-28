@@ -5,6 +5,7 @@
   "scripts": {
     "start": "bun src/index.ts",
     "dev": "concurrently \"nodemon\" \"bunx tailwindcss -i ./src/api/routes/frontend/styles.css -o ./src/api/static/styles.css --watch\"",
+    "build": "tailwindcss -i ./src/api/routes/frontend/styles.css -o ./src/api/static/styles.css",
     "credentials": "electron src/credential-fetcher.js"
   },
   "dependencies": {
