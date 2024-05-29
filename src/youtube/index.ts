@@ -71,12 +71,36 @@ class YTMessage implements Message {
   }
 }
 
+let chats: [AddChatItemAction, Masterchat, string][] = [];
+let goingThroughChats = false;
+
 async function startBot(streamId: string, removeThis: () => void) {
   const mc = await Masterchat.init(streamId, {
     credentials: env.YOUTUBE_BOT_CREDENTIALS,
   });
 
-  mc.on("chat", async (chat) => {
+  mc.on("actions", (actions) => {
+    for (const action of actions) {
+      if (action.type === "addChatItemAction") {
+        chats.push([action, mc, streamId]);
+      }
+    }
+  });
+
+  mc.on("end", () => {
+    mc.stop();
+    removeThis();
+  });
+
+  console.log(`YouTube bot started for stream ID: ${streamId}!`);
+
+  mc.listen({ ignoreFirstResponse: true });
+  return [mc, streamId] as const;
+}
+
+async function chatAction(chats: [AddChatItemAction, Masterchat, string][]) {
+  goingThroughChats = true;
+  for (const [chat, mc, streamId] of chats) {
     const message = new YTMessage(chat, mc, streamId);
     if (message.author.id === env.YOUTUBE_BOT_CHANNEL_ID) return;
 
@@ -170,17 +194,8 @@ async function startBot(streamId: string, removeThis: () => void) {
         });
       }
     }
-  });
-
-  mc.on("end", () => {
-    mc.stop();
-    removeThis();
-  });
-
-  console.log(`YouTube bot started for stream ID: ${streamId}!`);
-
-  mc.listen({ ignoreFirstResponse: true });
-  return [mc, streamId] as const;
+  }
+  goingThroughChats = false;
 }
 
 async function getStreams(): Promise<string[]> {
@@ -219,6 +234,13 @@ export async function startYouTube() {
   for (const streamId of streamIds) {
     streamsListening.push(await startBot(streamId, removeStreamFn(streamId)));
   }
+
+  setInterval(async () => {
+    if (!goingThroughChats) {
+      await chatAction(chats);
+      chats = [];
+    }
+  }, 5 * 1000);
 
   const graphDuration = 1 * 60 * 1000;
   setInterval(() => {
