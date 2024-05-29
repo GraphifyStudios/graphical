@@ -240,7 +240,7 @@ export async function startYouTube() {
       await chatAction(chats);
       chats = [];
     }
-  }, 5 * 1000);
+  }, 1 * 1000);
 
   const graphDuration = 1 * 60 * 1000;
   setInterval(() => {
