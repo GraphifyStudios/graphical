@@ -1,4 +1,5 @@
-import { exists, mkdir } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 interface Database {
@@ -56,7 +57,7 @@ export type User = Database["users"][number];
 const dbPath = join(process.cwd(), "db.json");
 
 async function initDatabase() {
-  if (!(await exists(dbPath))) {
+  if (!existsSync(dbPath)) {
     await Bun.write(
       dbPath,
       JSON.stringify({
@@ -259,16 +260,16 @@ export function setStream(
 ) {
   db.stream = data
     ? {
-      ...data,
-      time: Date.now(),
-    }
+        ...data,
+        time: Date.now(),
+      }
     : null;
 }
 
 const backupsPath = join(process.cwd(), "backups");
 
 setInterval(async () => {
-  if (!(await exists(backupsPath))) await mkdir(backupsPath);
+  if (!existsSync(backupsPath)) await mkdir(backupsPath);
   await Bun.write(
     join(backupsPath, `db-${Date.now()}.json`),
     JSON.stringify(db),
